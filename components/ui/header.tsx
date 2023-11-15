@@ -2,36 +2,35 @@ import Image from "next/image";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { ChatOptions } from "../chat-options";
+import { DropdownOptions } from "../dropdown-options";
 // import logo from '@/real-logo (1).svg'
 
 export async function Header() {
   const session = await getServerSession(authOptions);
   return (
-    <header className="flex outline outline-2 outline-neutral-200 px-4 justify-between items-center">
-      <span className="border-r border-neutral-300">
+    <header className="flex outline outline-2 outline-neutral-200">
+      <span className="border-r p-4 border-neutral-300">
         <Image
           src="/logo.png"
-          width={90}
-          height={90}
+          width={42}
+          height={42}
           fetchPriority="high"
           alt="logo"
         />
       </span>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-1 px-4 items-center justify-end gap-4">
         <ChatOptions />
-        <span>
+        <DropdownOptions imgUrl={session?.user?.image!} userId={session?.user?.id!}/>
+        {/* <span>
           <Image
             src={session?.user?.image!}
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             className="rounded-full"
             alt="profile-pic"
           />
-        </span>
-        <div className="flex flex-col">
-          <h2 className="font-semibold">{session?.user?.name}</h2>
-          <p>{session?.user?.email}</p>
-        </div>
+        </span> */}
+        
       </div>
     </header>
   );

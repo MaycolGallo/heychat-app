@@ -12,6 +12,8 @@ type PageProps = {
   };
 };
 
+export const dynamic = "force-dynamic";
+
 async function getInitialMessages(chatId: string) {
   try {
     const messages: string[] = await db.zrange(
@@ -48,14 +50,15 @@ export default async function Chat({ params }: PageProps) {
 
 
   return (
-    <div className="w-full lg:w-[calc(100%-384px)]">
+    <div className="w-full flex flex-col lg:w-[calc(100%-384px)]">
       <HeaderChat
         name={chatPartner?.name!}
         image={chatPartner?.image!}
         email={chatPartner?.email}
+        id={user?.id!}
       />
       <MessageList initialMessages={initialMessages} chatId={chatId} sessionId={session?.user.id!} />
-      <ChatInput chatId={chatId}/>
+      <ChatInput chatId={chatId} userId={user?.id!}/>
     </div>
   );
 }

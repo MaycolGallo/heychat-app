@@ -32,7 +32,7 @@ export function DropdownBody(props: Props) {
   }, [chatId, message]);
 
   return (
-    <div className="absolute top-0 right-32 z-10 w-48 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
+    <div className="absolute top-4 right-0 z-10 w-48 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg">
       <div className="py-1">
         <button
           type="button"

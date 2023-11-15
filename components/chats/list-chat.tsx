@@ -5,12 +5,14 @@ import { Suspense } from "react";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { getFriendList } from "@/lib/getFriendList";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { Skeleton } from "../ui/skeleton";
 
-export  async function UserListChat() {
+export async function UserListChat() {
   const session = await getServerSession(authOptions);
   const friends = await getFriendList(session?.user?.id!);
   return (
-    <nav className="max-w-sm  flex-1 border-r border-neutral-300 h-screen ">
+    <nav className="max-w-sm  flex-1 border-r border-neutral-300 ">
       <section className="flex sticky top-0 z-10  flex-col bg-white justify-between px-4 pt-4">
         <div className="flex justify-between items-center">
           <h1 className="font-bold text-xl">Chats</h1>
@@ -32,11 +34,12 @@ export  async function UserListChat() {
         </section>
       </section>
 
-      {/* <Suspense fallback={<div>Loading...</div>}>
-        <FriendList sessionId={session?.user?.id!} friends={friends}/>
-      </Suspense> */}
-      <FriendList sessionId={session?.user?.id!} friends={friends}/>
-
+      <ScrollArea className="list-chat-height">
+        <Suspense fallback={<Skeleton className="h-16" />}>
+          <FriendList sessionId={session?.user?.id!} friends={friends} />
+          <ScrollBar orientation="vertical" />
+        </Suspense>
+      </ScrollArea>
     </nav>
   );
 }
