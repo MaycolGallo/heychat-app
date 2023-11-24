@@ -50,7 +50,7 @@ export const authOptions = {
     },
     redirect({ url, baseUrl }) {
       console.log(url, baseUrl);
-      return `/${url}/chats`;
+      return `/chats`;
     },
   },
 } satisfies NextAuthOptions;

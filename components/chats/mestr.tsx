@@ -1,66 +1,24 @@
 "use client";
 
-import { Dispatch, useRef, useState } from "react";
-import { DropdownBody } from "./mess-options";
+import { useRef, useState } from "react";
+import { DropdownBody } from "./message-options";
 import { getTimeForTimestamp } from "@/lib/getTimeChat";
 import { MoreHorizontal } from "lucide-react";
 import { useParams } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuPortal,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Dropdon, Mu } from "../dropdon";
+import { Dropdon } from "../dropdon";
 
 type MessageItem = {
   message: Message;
   isCurrentUser: boolean;
 };
 
-function Propdown({
-  opne,
-  setOpen,
-  bodyOpen,
-  chino,
-}: {
-  opne?: boolean;
-  setOpen: Dispatch<boolean>;
-  bodyOpen?: boolean;
-  chino?: boolean;
-}) {
-  console.log("is opne", opne);
-  console.log("body open", bodyOpen);
-  console.log("chino", chino);
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        onClick={() => setOpen(!opne)}
-        className={`${!bodyOpen ? "hidden" : "block"}`}
-      >
-        <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <h1>Body {bodyOpen}</h1>
-      </DropdownMenuContent>
-      {/* {chino && (
-        <DropdownMenuPortal>
-
-        <DropdownMenuContent>
-          <h1>Niggs</h1>
-        </DropdownMenuContent>
-        </DropdownMenuPortal>
-      )} */}
-    </DropdownMenu>
-  );
-}
-
 export function MessageBox(props: MessageItem) {
   const [hoveredId, setHoveredId] = useState("");
   const [contentOpen, setContentOpen] = useState(false);
   const path = useParams();
   const ref = useRef<HTMLDivElement | null>(null);
-  const containerHeight = ref.current?.parentElement?.parentElement?.parentElement?.clientHeight || 0;
+  const containerHeight =
+    ref.current?.parentElement?.parentElement?.parentElement?.clientHeight || 0;
 
   const { message, isCurrentUser } = props;
   return (
@@ -90,11 +48,7 @@ export function MessageBox(props: MessageItem) {
             </button>
             {contentOpen && message.id === hoveredId ? (
               // <DropdownBody chatId={path.chatId as string} message={message} />
-              <Dropdon
-                containerHeight={
-                  containerHeight
-                }
-              />
+              <Dropdon containerHeight={containerHeight} chatId={path.chatId as string} message={message}/>
             ) : // <Mu />
             null}
           </div>

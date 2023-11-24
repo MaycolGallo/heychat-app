@@ -1,14 +1,22 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Trash } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
-export function Mu() {
-  const ref = useRef(null);
-  console.log(ref);
-  return <div ref={ref}>jello</div>;
-}
+type Props = {
+  containerHeight: number;
+  chatId: string;
+  message: Message;
+};
 
-export function Dropdon({ containerHeight }: { containerHeight: number }) {
+export function Dropdon(props: Props) {
+  const { containerHeight, chatId, message } = props;
   const [open, setOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState("bottom");
   const dropwdoneRef = useRef<HTMLDivElement | null>(null);
@@ -34,6 +42,19 @@ export function Dropdon({ containerHeight }: { containerHeight: number }) {
     };
   }, []);
 
+  const deleteMessage = useCallback(async () => {
+    return await fetch("/api/messages", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        chatId,
+        message,
+      }),
+    });
+  }, [chatId, message]);
+
   useLayoutEffect(() => {
     function calculatePosition() {
       if (dropwdoneRef.current) {
@@ -47,22 +68,14 @@ export function Dropdon({ containerHeight }: { containerHeight: number }) {
         // the dropdown's top position (triggerRect.top) and its height (dropHeight) exceeds the available
         // space in the window (windowHeight - scrollY).
         const isDropdownExceedingWindow =
-          triggerRect && triggerRect.top + dropHeight > containerHeight - scrollY;
+          triggerRect &&
+          triggerRect.top + dropHeight > containerHeight - scrollY;
 
         if (isDropdownExceedingWindow) {
           setDropdownPosition("top");
         } else {
           setDropdownPosition("bottom");
         }
-        console.log("dropHeight", dropHeight);
-        console.log("windowHeight", windowHeight);
-        console.log("scrollY", scrollY);
-        console.log("triggerRect", triggerRect);
-        console.log("isDropdownExceedingWindow", isDropdownExceedingWindow);
-        console.log(
-          "dropdownPosition",
-          dropwdoneRef.current?.getBoundingClientRect()
-        );
       }
     }
     calculatePosition();
@@ -77,7 +90,15 @@ export function Dropdon({ containerHeight }: { containerHeight: number }) {
         }`}
       >
         <ul>
-          <li>Skidibid Toilet</li>
+          <li className="flex text-red-500 items-center gap-3">
+            <Trash className="w-4 h-4"/>
+            <button
+              type="button"
+              // onClick={() => deleteMessage(chatId,message)}
+              onClick={deleteMessage}
+              className="inline-flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+            >Eliminar</button>
+          </li>
           <li>Skidibid Toilet 2</li>
           <li>Skidibid Toilet 3</li>
         </ul>
