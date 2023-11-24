@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { ChatOptions } from "../header-menu-options";
 import { DropdownOptions } from "../dropdown-options";
 import Link from "next/link";
@@ -26,6 +26,8 @@ export async function Header() {
         <DropdownOptions
           imgUrl={session?.user?.image!}
           userId={session?.user?.id!}
+          name={session?.user?.name!}
+          email={session?.user?.email!}
         />
         {/* <span>
           <Image

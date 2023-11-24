@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import ListRequests from "./components/list-requests";

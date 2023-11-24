@@ -1,4 +1,4 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { Await } from "@/components/buildui/await";
 import { ChatInput } from "@/components/chats/chat-input";
 import { HeaderChat } from "@/components/chats/header-chat";
@@ -56,7 +56,7 @@ export default async function Chat({ params }: PageProps) {
 
   const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User;
 
-  const initialMessages = await getInitialMessages(chatId);
+  const initialMessages = await getInitialMessages(chatId) as unknown as Message[];
 
   return (
     <div className="w-full md:flex flex-col lg:w-[calc(100%-384px)]">

@@ -11,10 +11,12 @@ import { LogOutIcon } from 'lucide-react'
 type Props = {
   imgUrl: string;
   userId: string;
+  email: string;
+  name: string;
 };
 
 export function DropdownOptions(props: Props) {
-  const { imgUrl,userId } = props;
+  const { imgUrl,userId, email, name } = props;
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {
       const storedLocation = window.localStorage.getItem("locationActive");
@@ -93,9 +95,9 @@ export function DropdownOptions(props: Props) {
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" alignOffset={0} sideOffset={5} className="backdrop-blur bg-white/75 backdrop-saturate-[180%]">
         <div>
-          <h1 className="font-bold">Maytek</h1>
-          <p>@maytek</p>
-          <Suspense>
+          <h1 className="font-bold">{name}</h1>
+          <p className="text-truncate">{email}</p>
+          <Suspense fallback={<div>Loading...</div>}>
             <UserCoordsInfo coord={coord} />
           </Suspense>
         </div>
