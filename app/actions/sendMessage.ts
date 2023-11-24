@@ -35,7 +35,7 @@ export async function sendMessage(chatId: string, data: FormData) {
     console.log(messageData);
 
     // pusher server trigger 
-    pusherServer.trigger(
+    await pusherServer.trigger(
       toPusherKey(`chat:${chatId}`),
       "incoming_message",
       {

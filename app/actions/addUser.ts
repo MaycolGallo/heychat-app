@@ -38,7 +38,7 @@ export async function addUser(data: FormData) {
       throw new Error("No puedes enviar una solicitud de amistad a ti mismo");
     }
 
-    pusherServer.trigger(
+    await pusherServer.trigger(
       toPusherKey(`user:${user}:incoming_friend_requests`),
       "new_incoming_friend",
       {

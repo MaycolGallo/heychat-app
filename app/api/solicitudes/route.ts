@@ -32,8 +32,6 @@ export async function POST(req: Request) {
 
     const y = await db.smembers(`user:${user}:incoming_friend_requests`);
 
-    console.log(user, y);
-
     if (!hasFriendRequest) {
       return new Response("No friend request", { status: 400 });
     }

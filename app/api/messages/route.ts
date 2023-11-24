@@ -7,7 +7,7 @@ export async function DELETE(req: Request) {
     const body = await req.json();
 
     // pusher server trigger
-    pusherServer.trigger(
+    await pusherServer.trigger(
       toPusherKey(`chat:${body.chatId}:messages`),
       "message_removed",
       body.message
