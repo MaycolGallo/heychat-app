@@ -3,10 +3,11 @@
 import { getTimeForTimestamp } from "@/lib/getTimeChat";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-import { useState, useEffect, memo, useRef } from "react";
+import { useState, useEffect, memo, useRef, useLayoutEffect } from "react";
 import { MessageBox } from "./mestr";
-import { ScrollArea } from "../ui/scroll-area";
 import { flushSync } from "react-dom";
+import { ScrollAreaChat } from "../ui/chat-scroll-area";
+import Dots from "../loaders/dots";
 
 type MessageListProps = {
   initialMessages: Message[];
@@ -14,7 +15,7 @@ type MessageListProps = {
   chatId: string;
 };
 
-export const MessageList = memo(function MessageList(props: MessageListProps) {
+const MessageList = memo(function MessageList(props: MessageListProps) {
   const { initialMessages, chatId } = props;
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
@@ -24,7 +25,7 @@ export const MessageList = memo(function MessageList(props: MessageListProps) {
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {
-        setMessages((prev) => [...prev, message]);
+      setMessages((prev) => [...prev, message]);
     };
 
     const handleRemovedMessage = (message: Message) => {
@@ -33,7 +34,7 @@ export const MessageList = memo(function MessageList(props: MessageListProps) {
     };
 
     const handleTyping = (data: any) => {
-      let clearInterval = 900;
+      const clearInterval = 900;
       let clearTimerId;
 
       if (data.userId !== props.sessionId) {
@@ -63,17 +64,19 @@ export const MessageList = memo(function MessageList(props: MessageListProps) {
     };
   }, [chatId, props.sessionId]);
 
-  useEffect(() => {
-    ref.current?.scrollTo({
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    ref.current.scrollBy({
       top: ref.current.scrollHeight,
+      left: 0,
       behavior: "smooth",
-    })
+    });
   }, [messages]);
+  console.log(ref.current);
 
   return (
-    <ScrollArea ref={ref} type="always" onScroll={(e) => {console.log(e)}} className="h-[calc(100vh-200px)]">
+    <ScrollAreaChat ref={ref} type="always">
       <section
-      onScroll={(e) => {console.log(e)}}
         data-chat={chatId}
         className="flex justify-end bg-sky-50 flex-col p-4 gap-4"
       >
@@ -83,23 +86,26 @@ export const MessageList = memo(function MessageList(props: MessageListProps) {
             // const isLastMessage =
             //   message.id === initialMessages[initialMessages.length - 1].id;
             return (
-                <MessageBox
-                  message={message}
-                  isCurrentUser={isCurrentUser}
-                  key={message.id}
-                />
+              <MessageBox
+                message={message}
+                isCurrentUser={isCurrentUser}
+                key={message.id}
+              />
             );
           })
         ) : (
           <div>no messages</div>
         )}
-        {/* {isTyping && (
-          
-        )} */}
-        <div className="text-sm w-16 bg-neutral-300 rounded-full p-3 text-gray-500">
-          ...
-        </div>
+        {isTyping && (
+          <div className="flex fixed animate-in slide-in-from-bottom-0 animate-out slide-out-to-bottom-48 bottom-20 left-1/2 justify-start">
+            <span className="bg-neutral-300 w-16 p-2 rounded-md">
+              <Dots />
+            </span>
+          </div>
+        )}
       </section>
-    </ScrollArea>
+    </ScrollAreaChat>
   );
 });
+
+export default MessageList;

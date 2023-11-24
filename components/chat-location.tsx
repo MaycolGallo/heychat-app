@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { GeoInfo, UserCoordsInfo } from "./show-user-coords";
 import { pusherClient } from "@/lib/pusher";
-import { getServerSession } from "next-auth";
 
 type GeoResult = {
   locationActive?: boolean;

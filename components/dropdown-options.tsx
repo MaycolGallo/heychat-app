@@ -5,6 +5,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Suspense, useEffect, useState } from "react";
 import { GeoInfo, UserCoordsInfo } from "./show-user-coords";
 import { Switch } from "./ui/switch";
+import { signOut } from "next-auth/react";
+import { LogOutIcon } from 'lucide-react'
 
 type Props = {
   imgUrl: string;
@@ -14,8 +16,11 @@ type Props = {
 export function DropdownOptions(props: Props) {
   const { imgUrl,userId } = props;
   const [locationActive, setLocationActive] = useState(() => {
-    const storedLocation = localStorage.getItem("locationActive");
-    return storedLocation ? JSON.parse(storedLocation) : false;
+    if (typeof window !== "undefined") {
+      const storedLocation = window.localStorage.getItem("locationActive");
+      return storedLocation ? JSON.parse(storedLocation) : false;
+    }
+    return false;
   });
   const [coord, setCoord] = useState<GeoInfo>({
     countryName: "",
@@ -74,7 +79,7 @@ export function DropdownOptions(props: Props) {
   }, [locationActive,userId]);
 
   return (
-    <Popover>
+    <Popover >
       <PopoverTrigger>
         <span>
           <Image
@@ -86,7 +91,7 @@ export function DropdownOptions(props: Props) {
           />
         </span>
       </PopoverTrigger>
-      <PopoverContent className="backdrop-blur bg-white/75 backdrop-saturate-[180%]">
+      <PopoverContent side="bottom" align="end" alignOffset={0} sideOffset={5} className="backdrop-blur bg-white/75 backdrop-saturate-[180%]">
         <div>
           <h1 className="font-bold">Maytek</h1>
           <p>@maytek</p>
@@ -94,13 +99,23 @@ export function DropdownOptions(props: Props) {
             <UserCoordsInfo coord={coord} />
           </Suspense>
         </div>
-        <ul>
+        <ul className="flex flex-col gap-3">
           <li className="flex justify-between items-center">
             Mostrar Ubicación{" "}
             <Switch
               onCheckedChange={setLocationActive}
               checked={locationActive}
             />
+          </li>
+          <li className="flex justify-between items-center">
+            <button
+              onClick={() => signOut()}
+              className="text-red-500 font-bold flex gap-3"
+            >
+            <LogOutIcon />
+
+              Cerrar Sesión
+            </button>
           </li>
         </ul>
       </PopoverContent>

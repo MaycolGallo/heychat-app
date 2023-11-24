@@ -5,6 +5,7 @@ import { UserCoordsInfo } from "../show-user-coords";
 import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { ChatLocation } from "../chat-location";
+import { BackButton } from "../ui/back-button";
 
 
 type FriendInfo = {
@@ -19,6 +20,7 @@ export async function HeaderChat(props: FriendInfo) {
   return (
     <section className="flex w-full justify-between px-5 py-3 border-b border-neutral-300 items-center">
       <div className="flex items-center gap-3">
+        <BackButton />
         <Image
           src={props?.image!}
           className="rounded-full"

@@ -1,9 +1,8 @@
 import { db } from "@/lib/db";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { AcceptButton } from "@/app/chats/solicitudes/components/accept-btn";
+import { Suspense } from "react";
+import ListRequests from "./components/list-requests";
 
 export default async function FriendRequests() {
   const session = await getServerSession(authOptions);
@@ -24,38 +23,16 @@ export default async function FriendRequests() {
   );
 
   return (
-    <div className="p-4 w-[calc(100%-384px)] ml-auto">
-      <h1 className="text-3xl font-bold">Solicitudes de mensaje</h1>
-      <ul className="flex flex-col gap-4 my-5">
-        {incomings.map((requeser) => (
-          <li
-            className="flex items-center justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
-            key={requeser.id}
-          >
-            <div className=" flex items-center">
-              {requeser.image ? (
-                <Image
-                  src={requeser.image}
-                  width={30}
-                  height={30}
-                  className="rounded-full"
-                  alt={`${requeser.email} imagen perfil `}
-                />
-              ) : (
-                <Image
-                  src="/logo.png"
-                  width={30}
-                  height={30}
-                  className="rounded-full"
-                  alt={`${requeser.email} imagen perfil `}
-                />
-              )}
-              <span>{requeser.email}</span>
-            </div>
-            <AcceptButton idToAccept={requeser.id} />
-          </li>
-        ))}
-      </ul>
+    <div className="px-4 py-6 md:w-[calc(100%-384px)]">
+      <h1 className="text-3xl font-bold text-blue-950">
+        Solicitudes de mensaje
+      </h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ListRequests
+          initialRequests={incomings}
+          sessionId={session?.user.id!}
+        />
+      </Suspense>
     </div>
   );
 }

@@ -27,15 +27,15 @@ export async function addUser(data: FormData) {
     );
 
     if (isAlreadySent || isAlreadyFriend) {
-      throw new Error("Already sent friend request");
+      throw new Error("Ya has enviado una solicitud de amistad a este usuario");
     }
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Este usuario no existe");
     }
 
     if (session?.user.id === user) {
-      throw new Error("You cannot add yourself as a friend");
+      throw new Error("No puedes enviar una solicitud de amistad a ti mismo");
     }
 
     pusherServer.trigger(
@@ -51,6 +51,6 @@ export async function addUser(data: FormData) {
     return { message: `Friend request sent to ${emailToAdd}`, type: "success" };
   } catch (error) {
     console.log(error);
-    return { message: `Ha ocurrido un error: ${error}`, type: "error" };
+    return { message: `${error}`, type: "error" };
   }
 }

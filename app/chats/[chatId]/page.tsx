@@ -2,9 +2,11 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Await } from "@/components/buildui/await";
 import { ChatInput } from "@/components/chats/chat-input";
 import { HeaderChat } from "@/components/chats/header-chat";
-import { MessageList } from "@/components/chats/message-list";
+import  MessageList  from "@/components/chats/message-list";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 
 type PageProps = {
   params: {
@@ -12,7 +14,15 @@ type PageProps = {
   };
 };
 
-export const dynamic = "force-dynamic";
+const Messages = dynamic(
+  () =>
+    import("@/components/chats/message-list"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
+
+// export const dynamic = "force-dynamic";
 
 async function getInitialMessages(chatId: string) {
   try {
@@ -26,7 +36,7 @@ async function getInitialMessages(chatId: string) {
     //   .map((message) => message as Message)
     //   .reverse();
 
-    console.log('mesanjes',messages);
+    console.log("mesanjes", messages);
 
     return messages;
   } catch (error) {
@@ -48,17 +58,27 @@ export default async function Chat({ params }: PageProps) {
 
   const initialMessages = await getInitialMessages(chatId);
 
-
   return (
-    <div className="w-full flex flex-col lg:w-[calc(100%-384px)]">
+    <div className="w-full md:flex flex-col lg:w-[calc(100%-384px)]">
       <HeaderChat
         name={chatPartner?.name!}
         image={chatPartner?.image!}
         email={chatPartner?.email}
         id={user?.id!}
       />
-      <MessageList initialMessages={initialMessages} chatId={chatId} sessionId={session?.user.id!} />
-      <ChatInput chatId={chatId} userId={user?.id!}/>
+      {/* <Suspense fallback={<div>Loading...</div>}>
+        <MessageList
+          initialMessages={initialMessages}
+          chatId={chatId}
+          sessionId={session?.user.id!}
+        />
+      </Suspense> */}
+      <Messages
+        initialMessages={initialMessages}
+        chatId={chatId}
+        sessionId={session?.user?.id!}
+      />
+      <ChatInput chatId={chatId} userId={user?.id!} />
     </div>
   );
 }
