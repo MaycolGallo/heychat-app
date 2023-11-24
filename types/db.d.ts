@@ -19,6 +19,13 @@ type Message = {
   timestamp: number;
 };
 
+type Requests = {
+  senderId: string;
+  senderEmail: string;
+  senderImage: string;
+  senderName: string;
+};
+
 type ExtendedMessage = Message & {
   senderEmail: string;
   senderName: string;

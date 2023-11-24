@@ -34,7 +34,7 @@ export default function Login() {
             Google
           </Button>
         </div>
-        <form className="flex flex-col gap-3 my-5">
+        {/* <form className="flex flex-col gap-3 my-5">
           <div>
             <Label htmlFor="email">Email</Label>
             <Input
@@ -51,7 +51,7 @@ export default function Login() {
           <Button className="w-full rounded-lg bg-blue-700 hover:bg-blue-600 my-3 text-lg">
             Entrar
           </Button>
-        </form>
+        </form> */}
       </section>
     </main>
   );

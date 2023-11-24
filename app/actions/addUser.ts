@@ -42,6 +42,8 @@ export async function addUser(data: FormData) {
       toPusherKey(`user:${user}:incoming_friend_requests`),
       "new_incoming_friend",
       {
+        senderName: session?.user.name,
+        senderImage: session?.user.image,
         senderId: session?.user.id,
         senderEmail: session?.user.email,
       }

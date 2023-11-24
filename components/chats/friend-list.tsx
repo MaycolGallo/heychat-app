@@ -24,10 +24,10 @@ export function FriendList({
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
     pusherClient.bind("new-friend", (message: ExtendedMessage) => {
-      const isNotChatPage =
+      const isChatPage =
         pathname !== `/chats/${linkChatSorted(sessionId, message.senderId)}`;
 
-      if (!isNotChatPage) return;
+      if (!isChatPage) return;
 
       toast({
         title: message.senderName,
@@ -63,14 +63,14 @@ export function FriendList({
 
 export function EmptyList() {
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+    <div className="absolute flex flex-col items-center gap-3 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
       <Image
         src={"https://img.icons8.com/?size=256&id=15940&format=png"}
         alt="logo"
         width={100}
         height={100}
       />
-      <h4>Sin Contactos</h4>
+      <h4 className="font-semibold">Sin Contactos</h4>
       <AddUser />
     </div>
   );

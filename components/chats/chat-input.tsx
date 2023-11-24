@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Send } from "lucide-react";
+import { Loader, Send } from "lucide-react";
 import { sendMessage } from "@/app/actions/sendMessage";
 import throttle from "lodash.throttle";
+import { useActionState } from "@/lib/use-form-state";
+import TextareaAutosize from "react-textarea-autosize";
 
 export function ChatInput({
   chatId,
@@ -13,14 +15,15 @@ export function ChatInput({
   userId: string;
 }) {
   const [message, setMessage] = useState("");
+  const sendMessageChat = sendMessage.bind(null, chatId);
+  const [sendMessageState, { loading }] = useActionState(sendMessageChat);
   const textareaRef = useRef<HTMLFormElement | null>(null);
   const rows = Math.max(1, message.split("\n").length);
 
-  const sendMessageChat = sendMessage.bind(null, chatId);
   const abortRef = useRef<AbortController | null>(null);
 
   const handleSubmit = async (formData: FormData) => {
-    await sendMessageChat(formData);
+    await sendMessageState(formData);
     setMessage("");
   };
 
@@ -111,21 +114,32 @@ export function ChatInput({
           className="relative w-full inline-flex flex-col"
           htmlFor="message"
         >
-          <textarea
+          {/* <textarea
             rows={rows}
             name="message"
             maxLength={300}
             value={message}
-            onKeyUp={tohle}
+            // onKeyUp={tohle}
             // onKeyUp={handleTyping}
             onChange={(e) => setMessage(e.target.value)}
+            className="w-full focus:outline-transparent focus:ring-2 ring-blue-700 relative p-3 pr-12 rounded-xl border border-neutral-300 bg-neutral-100 resize-none"
+          /> */}
+          <TextareaAutosize
+            minRows={1}
+            maxRows={4}
+            name="message"
             className="w-full focus:outline-transparent focus:ring-2 ring-blue-700 relative p-3 pr-12 rounded-xl border border-neutral-300 bg-neutral-100 resize-none"
           />
           <button
             type="submit"
+            aria-busy={loading}
             className="bg-blue-900 text-white rounded-lg p-2 absolute bottom-2 right-2 hover:bg-blue-900"
           >
-            <Send className="h-4 w-4" />
+            {loading ? (
+              <Loader className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </button>
         </label>
       </form>

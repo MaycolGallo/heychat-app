@@ -3,10 +3,10 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Onest } from "next/font/google";
 import { getServerSession } from "next-auth";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import { authOptions } from "@/lib/auth";
 
-const font = Onest({ display: "swap", subsets: ["latin"] });
+const font = Onest({ display: "swap", subsets: ["latin"], preload: true });
 
 export const metadata: Metadata = {
   title: "HeyChat!",

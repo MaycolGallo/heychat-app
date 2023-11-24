@@ -85,22 +85,22 @@ export function Dropdon(props: Props) {
     <div className="relative h-max">
       <div
         ref={dropwdoneRef}
-        className={`absolute z-10 border rounded-lg w-36 right-0 bg-white ${
+        className={`absolute z-10 border shadow backdrop-blur-md border-neutral-400 rounded-lg w-36 right-0 bg-white/75 ${
           dropdownPosition === "top" ? "bottom-9" : "top-full"
         }`}
       >
-        <ul>
-          <li className="flex text-red-500 items-center gap-3">
-            <Trash className="w-4 h-4"/>
+        <ul className="p-1 flex flex-col gap-3">
+          <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded text-red-500">
+            <Trash className="w-4 h-4 mr-2 shrink-0" />
             <button
               type="button"
               // onClick={() => deleteMessage(chatId,message)}
               onClick={deleteMessage}
-              className="inline-flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >Eliminar</button>
+              className="inline-flex text-sm text-neutral-700"
+            >
+              Eliminar
+            </button>
           </li>
-          <li>Skidibid Toilet 2</li>
-          <li>Skidibid Toilet 3</li>
         </ul>
       </div>
     </div>

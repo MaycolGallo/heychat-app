@@ -23,8 +23,8 @@ export function AddUser() {
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="bg-gradient-to-tr px-4 py-2 rounded-lg text-white from-blue-600 to-orange-600">
-          Nuevo mensaje
+        <DialogTrigger className="bg-gradient-to-tr px-4 hover:scale-105 transition-all py-2 rounded-lg text-white from-blue-600 to-purple-600">
+          Agregar Contacto
         </DialogTrigger>
 
         <DialogContent className="p-0 gap-0 w-[calc(100%-1rem)] rounded-lg">

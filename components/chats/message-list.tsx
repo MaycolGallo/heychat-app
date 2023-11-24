@@ -8,12 +8,24 @@ import { MessageBox } from "./mestr";
 import { flushSync } from "react-dom";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
 import Dots from "../loaders/dots";
+import { ArchiveX } from "lucide-react";
 
 type MessageListProps = {
   initialMessages: Message[];
   sessionId: string;
   chatId: string;
 };
+
+export function EmptyMessages(){
+  return (
+    <div className="h-full flex translate-y-[175%] items-center justify-center w-full">
+      <div className="flex flex-col gap-3 items-center">
+        <ArchiveX className="w-12 h-12 text-neutral-600"/>
+        <p className="text-2xl font-semibold">No hay mensajes</p>
+      </div>
+    </div>
+  )
+}
 
 const MessageList = memo(function MessageList(props: MessageListProps) {
   const { initialMessages, chatId } = props;
@@ -29,7 +41,6 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
     };
 
     const handleRemovedMessage = (message: Message) => {
-      console.log("deleted this lil", message);
       setMessages((prev) => prev.filter((msg) => msg.id !== message.id));
     };
 
@@ -72,10 +83,9 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
       behavior: "smooth",
     });
   }, [messages]);
-  console.log(ref.current);
 
   return (
-    <ScrollAreaChat ref={ref} type="always">
+    <ScrollAreaChat ref={ref} className="bg-sky-50" type="always">
       <section
         data-chat={chatId}
         className="flex justify-end bg-sky-50 flex-col p-4 gap-4"
@@ -94,7 +104,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
             );
           })
         ) : (
-          <div>no messages</div>
+          <EmptyMessages />
         )}
         {isTyping && (
           <div className="flex fixed animate-in slide-in-from-bottom-0 animate-out slide-out-to-bottom-48 bottom-20 left-1/2 justify-start">

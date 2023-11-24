@@ -49,7 +49,6 @@ export const authOptions = {
       return session;
     },
     redirect({ url, baseUrl }) {
-      console.log(url, baseUrl);
       return `/chats`;
     },
   },

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -24,7 +25,7 @@ export default function Home() {
               alt="logo"
             />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex mx-3 flex-col gap-4">
             <h1 className="font-bold tracking-tight text-7xl space-x-1.5">
               <span className="bg-clip-text text-transparent bg-gradient-to-l from-pink-500 to-purple-700">
                 Hey
@@ -33,8 +34,13 @@ export default function Home() {
                 Chat!
               </span>
             </h1>
-            <p className="text-white">Conecta con amigos.</p>
-            <Button>Comenzar a chatear</Button>
+            <p className="text-white text-center">Conecta con amigos.</p>
+            <Link
+              className="rounded-lg w-full inline-flex items-center justify-center bg-gradient-to-l hover:from-purple-700 hover:to-blue-500 from-blue-500 hover:scale-105 transition-all to-purple-700 px-5 py-3 text-white"
+              href="/chats"
+            >
+              Comenzar a chatear
+            </Link>
           </div>
         </section>
       </main>

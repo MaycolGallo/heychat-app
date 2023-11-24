@@ -14,16 +14,17 @@ export default async function FriendRequests() {
     incomingIds.map(async (id) => {
       const user = (await db.get(`user:${id}`)) as User;
       return {
-        id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
+        senderId: id,
+        senderName: user.name,
+        senderEmail: user.email,
+        senderImage: user.image,
       };
     })
   );
+  console.log('incomings',incomings);
 
   return (
-    <div className="px-4 py-6 md:w-[calc(100%-384px)]">
+    <div className="p-6 w-full bg-sky-50 lg:w-[calc(100%-384px)]">
       <h1 className="text-3xl font-bold text-blue-950">
         Solicitudes de mensaje
       </h1>

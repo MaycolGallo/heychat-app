@@ -6,7 +6,8 @@ import { Suspense, useEffect, useState } from "react";
 import { GeoInfo, UserCoordsInfo } from "./show-user-coords";
 import { Switch } from "./ui/switch";
 import { signOut } from "next-auth/react";
-import { LogOutIcon } from 'lucide-react'
+import { LogOutIcon } from "lucide-react";
+import { db } from "@/lib/db";
 
 type Props = {
   imgUrl: string;
@@ -16,13 +17,12 @@ type Props = {
 };
 
 export function DropdownOptions(props: Props) {
-  const { imgUrl,userId, email, name } = props;
+  const { imgUrl, userId, email, name } = props;
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {
       const storedLocation = window.localStorage.getItem("locationActive");
       return storedLocation ? JSON.parse(storedLocation) : false;
     }
-    return false;
   });
   const [coord, setCoord] = useState<GeoInfo>({
     countryName: "",
@@ -31,7 +31,8 @@ export function DropdownOptions(props: Props) {
   });
 
   useEffect(() => {
-    if (localStorage) localStorage.setItem("locationActive", JSON.stringify(locationActive)); 
+    if (localStorage)
+      localStorage.setItem("locationActive", JSON.stringify(locationActive));
 
     if (locationActive && navigator.geolocation) {
       console.log("Getting location...", locationActive);
@@ -43,6 +44,9 @@ export function DropdownOptions(props: Props) {
           );
           const data = await result.json();
           setCoord(data);
+
+          // await db.json.geoadd("user-locations", { latitude, longitude, member: `${userId}:current_location` });
+
           await fetch("/api/update-location", {
             method: "POST",
             headers: {
@@ -63,7 +67,7 @@ export function DropdownOptions(props: Props) {
         }
       );
     } else {
-       fetch("/api/update-location", {
+      fetch("/api/update-location", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,18 +75,18 @@ export function DropdownOptions(props: Props) {
         body: JSON.stringify({
           locationActive: locationActive,
         }),
-      })
+      });
       setCoord({
         countryName: "",
         countryCode: "",
         city: "",
       });
     }
-  }, [locationActive,userId]);
+  }, [locationActive, userId]);
 
   return (
-    <Popover >
-      <PopoverTrigger>
+    <Popover>
+      <PopoverTrigger className="hover:ring-purple-700  hover:ring-2 rounded-full ring-offset-2">
         <span>
           <Image
             src={imgUrl}
@@ -93,7 +97,13 @@ export function DropdownOptions(props: Props) {
           />
         </span>
       </PopoverTrigger>
-      <PopoverContent side="bottom" align="end" alignOffset={0} sideOffset={5} className="backdrop-blur bg-white/75 backdrop-saturate-[180%]">
+      <PopoverContent
+        side="bottom"
+        align="end"
+        alignOffset={0}
+        sideOffset={5}
+        className="backdrop-blur bg-white/75 backdrop-saturate-[180%]"
+      >
         <div>
           <h1 className="font-bold">{name}</h1>
           <p className="text-truncate">{email}</p>
@@ -114,8 +124,7 @@ export function DropdownOptions(props: Props) {
               onClick={() => signOut()}
               className="text-red-500 font-bold flex gap-3"
             >
-            <LogOutIcon />
-
+              <LogOutIcon />
               Cerrar Sesión
             </button>
           </li>

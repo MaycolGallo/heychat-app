@@ -1,11 +1,12 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
 import { db } from "../../../lib/db";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    const { id: idToUserToAdd } = await req.json();
+    const { id: idToUserToAdd, key } = await req.json();
 
     if (!session) {
       return new Response("Unauthorized", { status: 401 });
@@ -36,19 +37,25 @@ export async function POST(req: Request) {
       return new Response("No friend request", { status: 400 });
     }
 
-    const add = await db.sadd(`user:${user}:friends`, idToUserToAdd);
+    if (key === "add") {
+      const add = await db.sadd(`user:${user}:friends`, idToUserToAdd);
 
-    const inverseAdd = await db.sadd(`user:${idToUserToAdd}:friends`, user);
+      const inverseAdd = await db.sadd(`user:${idToUserToAdd}:friends`, user);
 
-    const remove = await db.srem(
-      `user:${user}:incoming_friend_requests`,
-      idToUserToAdd
-    );
+      const remove = await db.srem(
+        `user:${user}:incoming_friend_requests`,
+        idToUserToAdd
+      );
+      await Promise.all([add, inverseAdd, remove]);
+      revalidatePath("/chats/solicitudes");
+      return new Response("OK added", { status: 200 });
+    }
 
-    await Promise.all([add, inverseAdd, remove]);
-
-    return new Response("OK", { status: 200 });
+    if (key === "remove") {
+      await db.srem(`user:${user}:incoming_friend_requests`, idToUserToAdd);
+      return new Response("OK removed", { status: 200 });
+    }
   } catch (err) {
-    return new Response("Error", { status: 500 });
+    return new Response(`Error ${err}`, { status: 500 });
   }
 }

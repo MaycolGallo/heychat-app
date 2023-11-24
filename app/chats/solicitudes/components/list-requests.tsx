@@ -8,13 +8,13 @@ import Image from "next/image";
 import { UserX } from "lucide-react";
 
 type Props = {
-  initialRequests: User[];
+  initialRequests: Requests[];
   sessionId: string;
 };
 
 function EmptyList() {
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-2">
+    <div className="flex w-72 py-6 bg-white mx-auto border shadow rounded-lg translate-y-[150%] flex-col items-center justify-center gap-2">
       <UserX className="h-12 w-12 text-neutral-400" />
       <p>Sin solicitudes de mensaje</p>
     </div>
@@ -29,7 +29,8 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
       toPusherKey(`user:${sessionId}:incoming_friend_requests`)
     );
 
-    const newFriendRequestHandler = (newFriendRequest: User) => {
+    const newFriendRequestHandler = (newFriendRequest: Requests) => {
+      console.log("newFriendRequest", newFriendRequest);
       setRequests((current) => [...current, newFriendRequest]);
     };
 
@@ -43,22 +44,22 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
   }, [sessionId]);
 
   return (
-    <ul className="grid grid-cols-2 gap-4 my-5">
+    <>
       {requests.length ? (
-        <>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
           {requests.map((requeser) => (
             <li
-              className="flex items-center justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
-              key={requeser.id}
+              className="flex items-center bg-white justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
+              key={requeser.senderId}
             >
-              <div className=" flex items-center">
-                {requeser.image ? (
+              <div className=" flex items-center gap-3">
+                {requeser.senderImage ? (
                   <Image
-                    src={requeser.image}
+                    src={requeser.senderImage}
                     width={30}
                     height={30}
                     className="rounded-full"
-                    alt={`${requeser.email} imagen perfil `}
+                    alt={`${requeser.senderEmail} imagen perfil `}
                   />
                 ) : (
                   <Image
@@ -66,18 +67,18 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
                     width={30}
                     height={30}
                     className="rounded-full"
-                    alt={`${requeser.email} imagen perfil `}
+                    alt={`${requeser.senderEmail} imagen perfil `}
                   />
                 )}
-                <span>{requeser.email}</span>
+                <span>{requeser.senderEmail}</span>
               </div>
-              <AcceptButton idToAccept={requeser.id} />
+              <AcceptButton setRequests={setRequests} idToProcess={requeser.senderId} />
             </li>
           ))}
-        </>
+        </ul>
       ) : (
         <EmptyList />
       )}
-    </ul>
+    </>
   );
 }
