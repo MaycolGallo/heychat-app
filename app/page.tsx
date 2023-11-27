@@ -36,7 +36,7 @@ export default function Home() {
             </h1>
             <p className="text-white text-center">Conecta con amigos.</p>
             <Link
-              className="rounded-lg w-full inline-flex items-center justify-center bg-gradient-to-l hover:from-purple-700 hover:to-blue-500 from-blue-500 hover:scale-105 transition-all to-purple-700 px-5 py-3 text-white"
+              className="rounded-lg w-full duration-150 ease-in inline-flex items-center justify-center bg-gradient-to-l hover:from-purple-700 hover:to-blue-500 from-blue-500 hover:scale-105 transition-all to-purple-700 px-5 py-3 text-white"
               href="/chats"
             >
               Comenzar a chatear

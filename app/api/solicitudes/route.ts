@@ -2,11 +2,16 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth/next";
 import { db } from "../../../lib/db";
 import { revalidatePath } from "next/cache";
+import { pusherServer } from "@/lib/pusher";
+import { toPusherKey } from "@/lib/utils";
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const { id: idToUserToAdd, key } = await req.json();
+
+    const currentUser = (await db.get(`user:${session?.user?.id}`)) as User;
+    const friend = (await db.get(`user:${idToUserToAdd}`)) as User;
 
     if (!session) {
       return new Response("Unauthorized", { status: 401 });
@@ -31,8 +36,6 @@ export async function POST(req: Request) {
       idToUserToAdd
     );
 
-    const y = await db.smembers(`user:${user}:incoming_friend_requests`);
-
     if (!hasFriendRequest) {
       return new Response("No friend request", { status: 400 });
     }
@@ -46,8 +49,23 @@ export async function POST(req: Request) {
         `user:${user}:incoming_friend_requests`,
         idToUserToAdd
       );
-      await Promise.all([add, inverseAdd, remove]);
-      revalidatePath("/chats/solicitudes");
+
+      await Promise.all([
+        pusherServer.trigger(
+          toPusherKey(`user:${idToUserToAdd}:friends`),
+          "new_friend",
+          currentUser
+        ),
+        pusherServer.trigger(
+          toPusherKey(`user:${user}:friends`),
+          "new_friend",
+          friend
+        ),
+        add,
+        inverseAdd,
+        remove,
+      ]);
+      revalidatePath("/chats");
       return new Response("OK added", { status: 200 });
     }
 

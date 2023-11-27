@@ -1,10 +1,12 @@
 "use client";
 
-import { ListFilter, MessageSquarePlus, Search } from "lucide-react";
+import { ListFilter, MessageSquarePlus, MessageSquarePlusIcon, Search, UserPlus } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 import { Input } from "../ui/input";
 import { useViewportSize } from "@/lib/useViewport";
 import { Skeleton } from "../ui/skeleton";
+import { AddUser } from "../AddUser";
+import { Button } from "../ui/button";
 
 export function NavChatSkeleton() {
   return (
@@ -43,14 +45,16 @@ export function NavChat({ children }: { children: React.ReactNode }) {
       <section className="flex border-t-2 border-neutral-300 sticky top-0 z-10  flex-col bg-white justify-between px-4 pt-4">
         <div className="flex justify-between items-center">
           <h1 className="font-bold text-xl text-neutral-700">Chats </h1>
-          {/* <div className="flex gap-4">
-            <p>
-              <MessageSquarePlus className="h-5 w-5" />
-            </p>
-            <p>
+          <div className="flex gap-4">
+            <AddUser>
+              <Button className="hover:bg-neutral-200 px-4 py-2 bg-white text-blue-950 transition-all">
+                <MessageSquarePlusIcon className="w-5 h-5" />
+              </Button>
+            </AddUser>
+            {/* <p> 
               <ListFilter className="h-5 w-5" />
-            </p>
-          </div> */}
+            </p> */}
+          </div>
         </div>
         <section className="my-4 relative">
           <Input

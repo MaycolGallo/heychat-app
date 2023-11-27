@@ -18,7 +18,7 @@ type MessageListProps = {
 
 export function EmptyMessages(){
   return (
-    <div className="h-full flex translate-y-[175%] items-center justify-center w-full">
+    <div className="h-full flex translate-y-[-175%] items-center justify-center w-full">
       <div className="flex flex-col gap-3 items-center">
         <ArchiveX className="w-12 h-12 text-neutral-600"/>
         <p className="text-2xl font-semibold">No hay mensajes</p>
@@ -85,7 +85,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   }, [messages]);
 
   return (
-    <ScrollAreaChat ref={ref} className="bg-sky-50" type="always">
+    <ScrollAreaChat ref={ref} className="bg-sky-50 flex flex-col-reverse" type="always">
       <section
         data-chat={chatId}
         className="flex justify-end bg-sky-50 flex-col p-4 gap-4"
@@ -93,8 +93,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
         {messages?.length ? (
           messages.map((message) => {
             const isCurrentUser = message.senderId === props.sessionId;
-            // const isLastMessage =
-            //   message.id === initialMessages[initialMessages.length - 1].id;
+            
             return (
               <MessageBox
                 message={message}

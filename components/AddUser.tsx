@@ -15,16 +15,40 @@ import { Button } from "./ui/button";
 import { UserPlus2, Mail, Loader } from "lucide-react";
 import { addUser } from "@/app/actions/addUser";
 import { useActionState } from "@/lib/use-form-state";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export function AddUser() {
+export function AddUser({ children }: { children?: React.ReactNode }) {
   const [adUser, { loading, data }] = useActionState(addUser);
-  const [inputValue, setInputValue] = useState("");
+  const {
+    register,
+    clearErrors,
+    setError,
+    formState: { errors },
+  } = useForm();
+  useEffect(() => {
+    if (data?.type === "error") {
+      setError("root.serverError", {
+        type: "error",
+        message: data?.message,
+      });
+    }
+  },[setError, data]);
+
+  useEffect(() => {
+    if (data?.type === "success") {
+      clearErrors("root.serverError");
+    }
+  },[clearErrors, data]);
+  
   return (
     <div>
       <Dialog>
-        <DialogTrigger className="bg-gradient-to-tr px-4 hover:scale-105 transition-all py-2 rounded-lg text-white from-blue-600 to-purple-600">
-          Agregar Contacto
+        <DialogTrigger asChild>
+          {children ?? (
+            <Button className="bg-gradient-to-tr px-4 hover:scale-105 transition-all py-2 rounded-lg text-white from-blue-600 to-purple-600">
+              Agregar Contacto
+            </Button>
+          )}
         </DialogTrigger>
 
         <DialogContent className="p-0 gap-0 w-[calc(100%-1rem)] rounded-lg">
@@ -44,17 +68,24 @@ export function AddUser() {
                 <Input
                   type="email"
                   required
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
+                  {...register("email",{
+                    onChange: (e) => {
+                      clearErrors("root.serverError");
+                    }
+                  })}
                   // onBlur={() => setInputValue("")}
                   name="email"
                 />
-                {inputValue.length && data?.type === "error" ? (
-                  <p className="text-red-500">{data.message}</p>
-                ) : null}
-                {inputValue.length && data?.type === "success" ? (
-                  <p className="text-green-500">{data.message}</p>
-                ): null}
+                {errors.root?.serverError.type === "error" && (
+                  <p className="text-red-500 text-sm">
+                    {errors.root?.serverError.message}
+                  </p>
+                )}
+                {data?.type === "success" && (
+                  <p className="text-green-500 text-sm">
+                    {data?.message}
+                  </p>
+                )}
               </div>
               <Button
                 disabled={loading}

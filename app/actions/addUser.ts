@@ -50,7 +50,7 @@ export async function addUser(data: FormData) {
     );
 
     await db.sadd(`user:${user}:incoming_friend_requests`, session?.user.id);
-    return { message: `Friend request sent to ${emailToAdd}`, type: "success" };
+    return { message: `Solicitud enviada a ${emailToAdd}`, type: "success" };
   } catch (error) {
     console.log(error);
     return { message: `${error}`, type: "error" };

@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
 
 const options = [
   {
@@ -35,24 +37,32 @@ export function ListOptionsHeader({
   sessionId,
 }: ListOptionsHeaderProps) {
   const [unseen, setUnseen] = useState(initialUnseen);
+  const router = useRouter();
 
   useEffect(() => {
     pusherClient.subscribe(
       toPusherKey(`user:${sessionId}:incoming_friend_requests`)
     );
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
 
+    const newFriendHandler = () => {
+      setUnseen((prev) => prev - 1);
+    };
     const newFriendRequestHandler = () => {
       setUnseen((prev) => prev + 1);
     };
 
     pusherClient.bind("new_incoming_friend", newFriendRequestHandler);
+    pusherClient.bind("new_friend", newFriendHandler);
     return () => {
       pusherClient.unsubscribe(
         toPusherKey(`user:${sessionId}:incoming_friend_requests`)
       );
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
+      pusherClient.unbind("new_friend", newFriendHandler);
       pusherClient.unbind("new_incoming_friend", newFriendRequestHandler);
     };
-  }, [sessionId]);
+  }, [sessionId,router]);
 
   return (
     <TooltipProvider>
