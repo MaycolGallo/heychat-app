@@ -59,7 +59,7 @@ export default async function Chat({ params }: PageProps) {
   const initialMessages = await getInitialMessages(chatId) as unknown as Message[];
 
   return (
-    <div className="w-full md:flex flex-col lg:w-[calc(100%-384px)]">
+    <div className="w-full flex flex-col h-[calc(100vh-72px)] lg:w-[calc(100%-384px)]">
       <HeaderChat
         name={chatPartner?.name!}
         image={chatPartner?.image!}

@@ -18,7 +18,7 @@ type FriendInfo = {
 
 export async function HeaderChat(props: FriendInfo) {
   return (
-    <section className="flex w-full justify-between px-5 py-3 border-b border-neutral-300 items-center">
+    <section className="flex w-full justify-between p-3 border-b dark:bg-neutral-900 dark:border-neutral-700 border-neutral-300 items-center">
       <div className="flex items-center gap-3">
         <BackButton />
         <Image

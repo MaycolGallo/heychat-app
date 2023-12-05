@@ -38,18 +38,18 @@ export async function sendMessage(chatId: string, data: FormData) {
     await pusherServer.trigger(
       toPusherKey(`chat:${chatId}`),
       "incoming_message",
+      messageData
+    );
+
+    pusherServer.trigger(
+      toPusherKey(`user:${friendId}:chats`),
+      "new_message",
       {
         ...messageData,
         senderEmail: friendInfo.email,
         senderImage: friendInfo.image,
         senderName: friendInfo.name,
       }
-    );
-
-    pusherServer.trigger(
-      toPusherKey(`user:${friendId}:chats`),
-      "new_message",
-      messageData
     )
 
     // el chat tiene id sender--reciever

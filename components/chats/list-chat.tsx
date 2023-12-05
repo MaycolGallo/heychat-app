@@ -29,8 +29,6 @@ export async function UserListChat() {
     })
   );
 
-  console.log(friendLastMessages);
-
   return (
     <NavChat>
       <ScrollArea className="list-chat-height">

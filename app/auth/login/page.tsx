@@ -21,10 +21,10 @@ export default function Login() {
       <section className="max-w-md mx-3 sm:mx-auto w-full bg-white/50 p-6 rounded-2xl backdrop-saturate-[180%]">
         <div className="flex flex-col items-center">
           <Image src={"/logo.png"} width={80} height={80} alt="logo" />
-          <h1 className="text-3xl font-bold text-center">Iniciar Sesión</h1>
+          <h1 className="text-3xl text-neutral-900 font-bold text-center">Iniciar Sesión</h1>
           <Button
             onClick={login}
-            className="w-full my-3 py-6 text-lg rounded-lg bg-slate-900 hover:bg-slate-950 font-semibold"
+            className="w-full my-3 py-6 text-lg rounded-lg bg-slate-900 dark:bg-slate-900 hover:dark:bg-slate-950 hover:bg-slate-950 dark:text-white font-semibold"
           >
             <img
               className="h-5 mr-2"

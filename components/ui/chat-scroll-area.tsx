@@ -10,7 +10,7 @@ const ScrollAreaChat = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
 >(({ className, children, ...props }, ref) => (
   <ScrollAreaPrimitive.Root
-    className={cn("relative overflow-hidden h-[calc(100%-145px)]", className)}
+    className={cn("relative overflow-hidden", className)}
     {...props}
   >
     <ScrollAreaPrimitive.Viewport ref={ref} className="h-full w-full flex rounded-[inherit]">

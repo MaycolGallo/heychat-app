@@ -11,7 +11,7 @@ export function BackButton() {
   return (
     <>
       {params.chatId && width < 768 ? (
-        <button onClick={() => router.back()} className="p-2">
+        <button onClick={() => router.back()} className="p-0.5">
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </button>
       ) : null}

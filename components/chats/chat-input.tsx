@@ -104,7 +104,7 @@ export function ChatInput({
 
   // const rows = Math.max(3, Math.ceil(message.length / 100));
   return (
-    <section className="sticky bottom-0 bg-white border-t border-neutral-300">
+    <section className="sticky bottom-0 bg-neutral-50 dark:border-neutral-700/70 dark:bg-neutral-900 border-t border-neutral-300">
       <form
         ref={textareaRef}
         className="flex w-full gap-3 px-3 py-3"
@@ -128,7 +128,7 @@ export function ChatInput({
             minRows={1}
             maxRows={4}
             name="message"
-            className="w-full focus:outline-transparent focus:ring-2 ring-blue-700 relative p-3 pr-12 rounded-xl border border-neutral-300 bg-neutral-100 resize-none"
+            className="w-full focus:outline-transparent dark:ring-offset-neutral-900 dark:bg-neutral-800 focus:ring-2 ring-blue-700 relative p-3 pr-12 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-100 resize-none"
           />
           <button
             type="submit"

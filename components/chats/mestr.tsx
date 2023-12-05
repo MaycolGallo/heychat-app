@@ -57,7 +57,7 @@ export function MessageBox(props: MessageItem) {
           className={`inline-block max-w-[275px] relative px-3 py-1.5 rounded-2xl ${
             isCurrentUser
               ? "bg-blue-600 text-white rounded-br-sm"
-              : "bg-neutral-300 text-black rounded-tl-sm"
+              : "bg-neutral-300 dark:bg-neutral-600 dark:text-neutral-100 text-black rounded-tl-sm"
           }`}
         >
           {message.text}

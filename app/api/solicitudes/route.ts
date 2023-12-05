@@ -65,7 +65,6 @@ export async function POST(req: Request) {
         inverseAdd,
         remove,
       ]);
-      revalidatePath("/chats");
       return new Response("OK added", { status: 200 });
     }
 

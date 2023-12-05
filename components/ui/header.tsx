@@ -9,8 +9,8 @@ import Link from "next/link";
 export async function Header() {
   const session = await getServerSession(authOptions);
   return (
-    <header className="flex outline bg-neutral-50 outline-2 outline-neutral-200">
-      <span className="border-r p-4 border-neutral-300">
+    <header className="flex outline bg-neutral-50 dark:bg-neutral-800 outline-2 outline-neutral-200 dark:outline-neutral-800">
+      <span className="border-r p-4 border-neutral-300 dark:border-neutral-700">
         <Link href="/chats">
           <Image
             src="/logo.png"

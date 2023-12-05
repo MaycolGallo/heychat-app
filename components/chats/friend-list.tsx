@@ -5,14 +5,12 @@ import { Await } from "../buildui/await";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { linkChatSorted, toPusherKey } from "@/lib/utils";
-import { useEffect, Suspense, useState } from "react";
+import React, { useEffect, Suspense, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { useToast } from "../ui/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
 import Image from "next/image";
 import { AddUser } from "../AddUser";
-import { friendLastMessage } from "@/lib/lastMessage";
-import { revalidatePath } from "next/cache";
 
 export function FriendList({
   sessionId,
@@ -35,21 +33,17 @@ export function FriendList({
 
     const newFriendHandler = (newFriend: User) => {
       setActiveFriends((prev) => [...prev, newFriend]);
-    
     }
 
     const newMessageHandler = (message: ExtendedMessage) => {
-      const isChatPage =
+      const shouldNotify =
         pathname !== `/chats/${linkChatSorted(sessionId, message.senderId)}`;
-      console.log(isChatPage);
-      console.log(message);
-
-      if (!isChatPage) return;
+      if (!shouldNotify) return;
 
       setUnseenMessages((prev) => [...prev, message]);
 
       toast({
-        title: message.senderName,
+        title: <h1 className="text-lg font-semibold">{message.senderName}</h1> as any,
         description: <p className="text-sm truncate">{message.text}</p>,
       });
     };
@@ -62,8 +56,7 @@ export function FriendList({
       pusherClient.unbind("new_message", newMessageHandler);
       pusherClient.unbind('new_friend', newFriendHandler);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId, pathname, router]);
+  }, [sessionId, pathname, router,toast]);
 
   useEffect(() => {
     if (pathname.includes("/chats")) {
@@ -75,7 +68,7 @@ export function FriendList({
 
   return (
     <>
-      {friends.length ? (
+      {activeFriends.length ? (
         <ul className=" flex flex-col gap-4 p-4">
           {activeFriends.sort().map((friend) => {
             const unseenCount = unseenMessages.filter(
@@ -87,7 +80,7 @@ export function FriendList({
             
             return (
               <li
-                className="flex items-center justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
+                className="flex items-center justify-between border gap-3 border-neutral-300 dark:border-neutral-700 rounded-lg p-4 shadow"
                 key={friend.id}
               >
                 <Link href={`/chats/${linkChatSorted(sessionId, friend.id)}`} className="flex gap-3 w-full">
@@ -118,7 +111,7 @@ export function FriendList({
                         })}
                       </span>
                       {unseenCount > 0 && (
-                        <span className="w-5 h-5 rounded-full text-sm bg-blue-950 text-white">
+                        <span className="w-5 h-5 rounded-full text-xs flex items-center justify-center bg-blue-950 text-white">
                           {unseenCount}
                         </span>
                       )}

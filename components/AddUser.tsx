@@ -52,7 +52,7 @@ export function AddUser({ children }: { children?: React.ReactNode }) {
         </DialogTrigger>
 
         <DialogContent className="p-0 gap-0 w-[calc(100%-1rem)] rounded-lg">
-          <DialogHeader className="bg-neutral-100 border-b border-neutral-300 rounded-t-lg px-3 py-4">
+          <DialogHeader className="bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-700 rounded-t-lg px-3 py-4">
             <DialogTitle>Enviar solicitud de mensaje</DialogTitle>
           </DialogHeader>
           <section className=" p-4">

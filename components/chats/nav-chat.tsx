@@ -40,11 +40,11 @@ export function NavChat({ children }: { children: React.ReactNode }) {
     <nav
       className={`md:max-w-sm ${
         !isChatRoute && width < 768 ? "hidden" : "w-full"
-      } flex-1 border-r border-neutral-300 `}
+      } flex-1 border-r border-neutral-300 dark:border-neutral-800`}
     >
-      <section className="flex border-t-2 border-neutral-300 sticky top-0 z-10  flex-col bg-white justify-between px-4 pt-4">
+      <section className="flex border-t-2 border-neutral-300 dark:border-neutral-800 sticky top-0 z-10  flex-col bg-white dark:bg-neutral-900 justify-between px-4 pt-4">
         <div className="flex justify-between items-center">
-          <h1 className="font-bold text-xl text-neutral-700">Chats </h1>
+          <h1 className="font-bold text-xl text-neutral-700 dark:text-neutral-100">Chats </h1>
           <div className="flex gap-4">
             <AddUser>
               <Button className="hover:bg-neutral-200 px-4 py-2 bg-white text-blue-950 transition-all">

@@ -45,7 +45,7 @@ export function ListOptionsHeader({
     );
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
 
-    const newFriendHandler = () => {
+    const addedFriendHandler = () => {
       setUnseen((prev) => prev - 1);
     };
     const newFriendRequestHandler = () => {
@@ -53,16 +53,16 @@ export function ListOptionsHeader({
     };
 
     pusherClient.bind("new_incoming_friend", newFriendRequestHandler);
-    pusherClient.bind("new_friend", newFriendHandler);
+    pusherClient.bind("new_friend", addedFriendHandler);
     return () => {
       pusherClient.unsubscribe(
         toPusherKey(`user:${sessionId}:incoming_friend_requests`)
       );
       pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
-      pusherClient.unbind("new_friend", newFriendHandler);
+      pusherClient.unbind("new_friend", addedFriendHandler);
       pusherClient.unbind("new_incoming_friend", newFriendRequestHandler);
     };
-  }, [sessionId,router]);
+  }, [sessionId]);
 
   return (
     <TooltipProvider>
@@ -70,7 +70,7 @@ export function ListOptionsHeader({
         <Tooltip key={option.label}>
           <TooltipTrigger asChild>
             <Link
-              className="rounded-full hover:ring-2 ring-offset-2 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3"
+              className="rounded-full dark:bg-neutral-700 dark:text-nueutral-100 hover:ring-2 ring-offset-2 dark:ring-offset-neutral-800 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3"
               href={option.link}
             >
               {option.icon}

@@ -10,7 +10,7 @@ export default function Home() {
           HeyChat!
         </h1>
       </div>
-      <p className="max-w-md my-5 text-center">
+      <p className="max-w-md text-black my-5 text-center">
         Selecciona un contacto para crear una conversación o añade uno nuevo a
         tu lista.
       </p>

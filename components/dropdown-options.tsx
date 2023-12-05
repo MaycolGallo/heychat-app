@@ -102,27 +102,27 @@ export function DropdownOptions(props: Props) {
         align="end"
         alignOffset={0}
         sideOffset={5}
-        className="backdrop-blur bg-white/75 backdrop-saturate-[180%]"
+        className="backdrop-blur bg-white/75 border border-neutral-300 dark:border-neutral-900 dark:bg-neutral-800 p-0 backdrop-saturate-[180%]"
       >
-        <div>
+        <div className="p-3 border-b border-neutral-300 dark:border-b-neutral-600">
           <h1 className="font-bold">{name}</h1>
           <p className="text-truncate">{email}</p>
           <Suspense fallback={<div>Loading...</div>}>
             <UserCoordsInfo coord={coord} />
           </Suspense>
         </div>
-        <ul className="flex flex-col gap-3">
-          <li className="flex justify-between items-center">
+        <ul className="flex m-2 flex-col gap-1">
+          <li className="flex justify-between px-2 py-2 rounded hover:bg-neutral-300 dark:hover:bg-neutral-700 items-center">
             Mostrar Ubicación{" "}
             <Switch
               onCheckedChange={setLocationActive}
               checked={locationActive}
             />
           </li>
-          <li className="flex justify-between items-center">
+          <li className="flex justify-between hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded px-2 py-2 items-center">
             <button
               onClick={() => signOut()}
-              className="text-red-500 font-bold flex gap-3"
+              className="text-red-500 w-full font-bold flex gap-3"
             >
               <LogOutIcon />
               Cerrar Sesión

@@ -85,10 +85,10 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   }, [messages]);
 
   return (
-    <ScrollAreaChat ref={ref} className="bg-sky-50 flex flex-col-reverse" type="always">
+    <ScrollAreaChat ref={ref} className="bg-sky-50 dark:bg-zinc-900 flex flex-1 flex-col-reverse" type="always">
       <section
         data-chat={chatId}
-        className="flex justify-end bg-sky-50 flex-col p-4 gap-4"
+        className="flex justify-end bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
       >
         {messages?.length ? (
           messages.map((message) => {

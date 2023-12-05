@@ -14,7 +14,7 @@ type Props = {
 
 function EmptyList() {
   return (
-    <div className="flex w-72 py-6 bg-white mx-auto border shadow rounded-lg translate-y-[150%] flex-col items-center justify-center gap-2">
+    <div className="flex w-72 py-6 bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:text-white mx-auto border shadow rounded-lg translate-y-[150%] flex-col items-center justify-center gap-2">
       <UserX className="h-12 w-12 text-neutral-400" />
       <p>Sin solicitudes de mensaje</p>
     </div>
@@ -49,7 +49,7 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
           {requests.map((requeser) => (
             <li
-              className="flex items-center bg-white justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
+              className="flex items-center bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:text-white justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
               key={requeser.senderId}
             >
               <div className=" flex items-center gap-3">
