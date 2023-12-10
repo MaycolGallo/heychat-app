@@ -5,7 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="flex h-[calc(100vh-74px)]  overflow-hidden">
+      <main className="flex justify-stretch h-[calc(100dvh-72px)]  overflow-hidden">
         <UserListChat />
         {children}
       </main>

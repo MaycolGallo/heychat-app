@@ -135,6 +135,7 @@ export function EmptyList() {
       <Image
         src={"https://img.icons8.com/?size=256&id=15940&format=png"}
         alt="logo"
+        className="dark:invert"
         width={100}
         height={100}
       />

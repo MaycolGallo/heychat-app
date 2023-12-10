@@ -31,7 +31,7 @@ export async function UserListChat() {
 
   return (
     <NavChat>
-      <ScrollArea className="list-chat-height">
+      <ScrollArea className="list-chat-height dark:bg-neutral-950">
         <Suspense fallback={<Skeleton className="h-16" />}>
           <FriendList sessionId={session?.user?.id!} friendLastMessage={friendLastMessages} friends={friends} />
           <ScrollBar orientation="vertical" />

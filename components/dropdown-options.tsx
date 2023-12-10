@@ -6,8 +6,9 @@ import { Suspense, useEffect, useState } from "react";
 import { GeoInfo, UserCoordsInfo } from "./show-user-coords";
 import { Switch } from "./ui/switch";
 import { signOut } from "next-auth/react";
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, SunIcon, MoonIcon } from "lucide-react";
 import { db } from "@/lib/db";
+import { useTheme } from "next-themes";
 
 type Props = {
   imgUrl: string;
@@ -18,6 +19,8 @@ type Props = {
 
 export function DropdownOptions(props: Props) {
   const { imgUrl, userId, email, name } = props;
+  const { theme, setTheme } = useTheme();
+
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {
       const storedLocation = window.localStorage.getItem("locationActive");
@@ -111,13 +114,22 @@ export function DropdownOptions(props: Props) {
             <UserCoordsInfo coord={coord} />
           </Suspense>
         </div>
-        <ul className="flex m-2 flex-col gap-1">
+        <ul className="flex m-2 flex-col">
           <li className="flex justify-between px-2 py-2 rounded hover:bg-neutral-300 dark:hover:bg-neutral-700 items-center">
             Mostrar Ubicación{" "}
             <Switch
               onCheckedChange={setLocationActive}
               checked={locationActive}
             />
+          </li>
+          <li className="flex justify-between hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded px-2 py-2 items-center">
+            <button
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              className=" flex gap-3 "
+            >
+              <span>{theme === "dark" ? <SunIcon /> : <MoonIcon />}</span>
+              Tema {theme === "light" ? "Oscuro" : "Claro"}
+            </button>
           </li>
           <li className="flex justify-between hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded px-2 py-2 items-center">
             <button

@@ -9,10 +9,10 @@ import {
 } from "./ui/tooltip";
 import { useEffect, useState } from "react";
 import { pusherClient } from "@/lib/pusher";
-import { toPusherKey } from "@/lib/utils";
+import { cn, toPusherKey } from "@/lib/utils";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const options = [
   {
@@ -38,6 +38,7 @@ export function ListOptionsHeader({
 }: ListOptionsHeaderProps) {
   const [unseen, setUnseen] = useState(initialUnseen);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     pusherClient.subscribe(
@@ -70,7 +71,10 @@ export function ListOptionsHeader({
         <Tooltip key={option.label}>
           <TooltipTrigger asChild>
             <Link
-              className="rounded-full dark:bg-neutral-700 dark:text-nueutral-100 hover:ring-2 ring-offset-2 dark:ring-offset-neutral-800 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3"
+              className={cn(
+                "rounded-full dark:bg-neutral-700 dark:text-nueutral-100 hover:ring-2 ring-offset-2 dark:ring-offset-neutral-800 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3",
+                pathname === option.link && "dark:bg-blue-300 dark:text-blue-950 text-white bg-blue-500"
+              )}
               href={option.link}
             >
               {option.icon}

@@ -49,7 +49,7 @@ export const authOptions = {
       return session;
     },
     redirect({ url, baseUrl }) {
-      return `/chats`;
+      return "/chats";
     },
   },
 } satisfies NextAuthOptions;

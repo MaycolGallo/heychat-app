@@ -3,7 +3,7 @@
 import { getTimeForTimestamp } from "@/lib/getTimeChat";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-import { useState, useEffect, memo, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, memo, useRef, useLayoutEffect, useReducer } from "react";
 import { MessageBox } from "./mestr";
 import { flushSync } from "react-dom";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
@@ -11,7 +11,7 @@ import Dots from "../loaders/dots";
 import { ArchiveX } from "lucide-react";
 
 type MessageListProps = {
-  initialMessages: Message[];
+  initialMessages: {[key: string]: Message[]}
   sessionId: string;
   chatId: string;
 };
@@ -27,9 +27,41 @@ export function EmptyMessages(){
   )
 }
 
+const reducer = (state: MessageListProps['initialMessages'], action: { type: string, payload: Message}) => {
+  if (!action) {
+    return state;
+  }
+
+  const { type, payload } = action;
+  const { timestamp } = payload;
+  const date = new Date(timestamp).toLocaleDateString();
+
+  if (type === 'ADD_MESSAGE') {
+    return {
+      ...state,
+      [date]: [...(state[date] || []), payload],
+    };
+  }
+
+  if (type === 'REMOVE_MESSAGE') {
+    const updatedMessages = {
+      ...state,
+      [date]: state[date].filter((message) => message.id !== payload.id),
+    };
+
+    if (updatedMessages[date].length === 0) {
+      delete updatedMessages[date];
+    }
+
+    return updatedMessages;
+  }
+
+  return state;
+};
+
 const MessageList = memo(function MessageList(props: MessageListProps) {
   const { initialMessages, chatId } = props;
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, dispatch] = useReducer(reducer, initialMessages);
   const [isTyping, setIsTyping] = useState(false);
 
   console.log("messages", messages);
@@ -37,11 +69,11 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {
-      setMessages((prev) => [...prev, message]);
+      dispatch({type: 'ADD_MESSAGE', payload: message});
     };
 
     const handleRemovedMessage = (message: Message) => {
-      setMessages((prev) => prev.filter((msg) => msg.id !== message.id));
+      dispatch({type: 'REMOVE_MESSAGE', payload: message});
     };
 
     const handleTyping = (data: any) => {
@@ -85,23 +117,30 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   }, [messages]);
 
   return (
-    <ScrollAreaChat ref={ref} className="bg-sky-50 dark:bg-zinc-900 flex flex-1 flex-col-reverse" type="always">
+    <ScrollAreaChat ref={ref} className="bg-sky-50 dark:bg-zinc-900 flex h-full max-h-full flex-grow" type="always">
       <section
         data-chat={chatId}
         className="flex justify-end bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
       >
-        {messages?.length ? (
-          messages.map((message) => {
-            const isCurrentUser = message.senderId === props.sessionId;
-            
-            return (
-              <MessageBox
-                message={message}
-                isCurrentUser={isCurrentUser}
-                key={message.id}
-              />
-            );
-          })
+        {Object.keys(messages).length ? (
+          <>
+            {Object.entries(messages).map(([key, message]) => (
+              <ul key={key}>
+                <h1>{key}</h1>
+                {message.map((message) => {
+                const isCurrentUser = message.senderId === props.sessionId;
+                
+                return (
+                  <MessageBox
+                    message={message}
+                    isCurrentUser={isCurrentUser}
+                    key={message.id}
+                  />
+                );
+              })}
+              </ul>
+            ))}
+          </>
         ) : (
           <EmptyMessages />
         )}

@@ -2,11 +2,12 @@ import { authOptions } from "@/lib/auth";
 import { Await } from "@/components/buildui/await";
 import { ChatInput } from "@/components/chats/chat-input";
 import { HeaderChat } from "@/components/chats/header-chat";
-import  MessageList  from "@/components/chats/message-list";
+import MessageList from "@/components/chats/message-list";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 
 type PageProps = {
   params: {
@@ -14,13 +15,9 @@ type PageProps = {
   };
 };
 
-const Messages = dynamic(
-  () =>
-    import("@/components/chats/message-list"),
-  {
-    loading: () => <p>Loading...</p>,
-  }
-);
+const Messages = dynamic(() => import("@/components/chats/message-list"), {
+  loading: () => <p>Loading...</p>,
+});
 
 // export const dynamic = "force-dynamic";
 
@@ -32,13 +29,20 @@ async function getInitialMessages(chatId: string) {
       -1
     );
 
-    // const results = messages
-    //   .map((message) => message as Message)
-    //   .reverse();
+    const groupedByDay = messages.reduce((previous, message, index) => {
+      const {timestamp} = message as unknown as Message
+      const date = new Date(timestamp).toLocaleDateString();
 
-    console.log("mesanjes", messages);
+      if (!previous[date]) {
+        previous[date] = [];
+      }
 
-    return messages;
+      previous[date].push(message);
+      return previous;
+    }, {} as { [date: string]: string[] });
+    console.log(groupedByDay);
+
+    return groupedByDay;
   } catch (error) {
     console.log(error);
   }
@@ -52,14 +56,20 @@ export default async function Chat({ params }: PageProps) {
 
   const [userId1, userId2] = chatId.split("--");
 
+  if (!userId1 || !userId2) {
+    notFound();
+  }
+
   const chatPartnerId = user?.id === userId1 ? userId2 : userId1;
 
   const chatPartner = (await db.get(`user:${chatPartnerId}`)) as User;
 
-  const initialMessages = await getInitialMessages(chatId) as unknown as Message[];
+  const initialMessages = (await getInitialMessages(
+    chatId
+  )) as unknown as Record<string, Message[]>;
 
   return (
-    <div className="w-full flex flex-col h-[calc(100vh-72px)] lg:w-[calc(100%-384px)]">
+    <div className="w-full flex flex-col h-[calc(100dvh-72px)] flex-grow lg:w-[calc(100%-384px)]">
       <HeaderChat
         name={chatPartner?.name!}
         image={chatPartner?.image!}

@@ -21,7 +21,6 @@ export default async function FriendRequests() {
       };
     })
   );
-  console.log('incomings',incomings);
 
   return (
     <div className="p-6 w-full bg-sky-50 dark:bg-neutral-900 lg:w-[calc(100%-384px)]">

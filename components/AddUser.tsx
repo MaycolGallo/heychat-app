@@ -45,7 +45,7 @@ export function AddUser({ children }: { children?: React.ReactNode }) {
       <Dialog>
         <DialogTrigger asChild>
           {children ?? (
-            <Button className="bg-gradient-to-tr px-4 hover:scale-105 transition-all py-2 rounded-lg text-white from-blue-600 to-purple-600">
+            <Button className="bg-gradient-to-tr dark:text-neutral-50 px-4 hover:scale-105 transition-all py-2 rounded-lg text-white from-blue-600 to-purple-600">
               Agregar Contacto
             </Button>
           )}

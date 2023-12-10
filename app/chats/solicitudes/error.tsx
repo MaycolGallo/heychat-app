@@ -16,8 +16,8 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-72px)] text-blue-950 justify-center bg-sky-50 dark:text-neutral-50 dark:bg-zinc-900  items-center w-full md:max-w-[calc(100%-348px)]">
-      <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col h-[calc(100dvh-72px)] justify-center bg-sky-50 dark:text-neutral-50 dark:bg-zinc-900  items-center w-full md:max-w-[calc(100%-348px)]">
+      <div>
         <Image
           src={"https://img.icons8.com/ios-filled/100/FA5252/error--v1.png"}
           width={100}
@@ -26,7 +26,7 @@ export default function Error({
         />
         <h2 className="text-center font-bold text-4xl">Oops! Hubo un error</h2>
       </div>
-      <p className="italic">{error.message}</p>
+      <p>{error.message}</p>
       <button
         onClick={
           // Attempt to recover by trying to re-render the segment

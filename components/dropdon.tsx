@@ -71,6 +71,13 @@ export function Dropdon(props: Props) {
           triggerRect &&
           triggerRect.top + dropHeight > containerHeight - scrollY;
 
+        const isDropdownOverflowingLeft = triggerRect && triggerRect.left < scrollY;
+        console.log(isDropdownOverflowingLeft,triggerRect?.left,scrollY);
+
+        if (isDropdownOverflowingLeft) {
+          dropwdoneRef.current.style.right = "-150%";
+        }
+
         if (isDropdownExceedingWindow) {
           setDropdownPosition("top");
         } else {
