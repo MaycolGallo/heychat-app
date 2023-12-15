@@ -54,13 +54,13 @@ export function AcceptButton({
     <div className="flex items-center gap-2">
       <Button
         onClick={() => moneyForFun(idToProcess)}
-        className="px-3 py-1 bg-violet-500 hover:bg-violet-600"
+        className="px-3 py-1 bg-violet-500 hover:bg-violet-600 dark:bg-violet-600 dark:hover:bg-violet-700"
       >
         <UserCheck2 className="w-5 h-5" />
       </Button>
       <Button
         onClick={() => moneyForLove(idToProcess)}
-        className="px-3 hover:bg-red-600 py-1 bg-red-500"
+        className="px-3 hover:bg-red-600 py-1 bg-red-500 dark:bg-red-600 dark:hover:bg-red-700"
       >
         <UserX2 className="w-5 h-5" />
       </Button>

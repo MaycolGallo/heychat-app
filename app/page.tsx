@@ -1,6 +1,3 @@
-// Compare this snippet from components/chats/list-chat.tsx:UserListChat
-
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 

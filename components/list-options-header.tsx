@@ -1,5 +1,5 @@
 "use client";
-import { Bell, UserPlus2 } from "lucide-react";
+import { Bell, UserPlus2,Contact2 } from "lucide-react";
 
 import {
   Tooltip,
@@ -14,12 +14,32 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { usePathname, useRouter } from "next/navigation";
 
+function IconContacts() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="currentColor"
+      viewBox="0 0 16 16"
+    >
+      <path d="M6 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zM11 3.5a.5.5 0 01.5-.5h4a.5.5 0 010 1h-4a.5.5 0 01-.5-.5zm.5 2.5a.5.5 0 000 1h4a.5.5 0 000-1h-4zm2 3a.5.5 0 000 1h2a.5.5 0 000-1h-2zm0 3a.5.5 0 000 1h2a.5.5 0 000-1h-2z"></path>
+    </svg>
+  );
+}
+
 const options = [
+  {
+    label: "Contactos",
+    link: "/chats/contactos",
+    icon: <IconContacts />,
+  },
   {
     label: "Solicitudes mensajes",
     link: "/chats/solicitudes",
     icon: <UserPlus2 className="h-5 w-5" />,
   },
+  
   // {
   //   label: "Notificaciones",
   //   link: "/notificaciones",
@@ -73,7 +93,7 @@ export function ListOptionsHeader({
             <Link
               className={cn(
                 "rounded-full dark:bg-neutral-700 dark:text-nueutral-100 hover:ring-2 ring-offset-2 dark:ring-offset-neutral-800 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3",
-                pathname === option.link && "dark:bg-blue-300 dark:text-blue-950 text-white bg-blue-500"
+                pathname === option.link && "dark:bg-blue-300 dark:text-blue-950 text-blue-950 bg-blue-300"
               )}
               href={option.link}
             >

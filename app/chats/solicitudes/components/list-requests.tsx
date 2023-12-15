@@ -44,9 +44,9 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
   }, [sessionId]);
 
   return (
-    <>
+    <div className="request-container">
       {requests.length ? (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-5">
+        <ul className="grid requests grid-cols-1 gap-4 my-5">
           {requests.map((requeser) => (
             <li
               className="flex items-center bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:text-white justify-between border gap-3 border-neutral-300 rounded-lg p-4 shadow"
@@ -79,6 +79,6 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
       ) : (
         <EmptyList />
       )}
-    </>
+    </div>
   );
 }

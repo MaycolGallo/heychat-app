@@ -28,7 +28,7 @@ export async function HeaderChat(props: FriendInfo) {
           height={40}
           alt={`${props?.name} profile pic`}
         />
-        <div>
+        <div className="text-sm sm:text-base">
           <h2 className="font-semibold">{props?.name}</h2>
           <p>{props?.email}</p>
           <Suspense fallback={<Skeleton className="h-4 w-24" />}>

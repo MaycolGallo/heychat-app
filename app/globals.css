@@ -10,6 +10,16 @@ html {
   height: calc(100% - 120px);
 }
 
+.request-container{
+  container-type: inline-size;
+}
+
+@container (min-width: 768px) {
+  .requests{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* .bg-landing {
   background-color:hsla(222,73%,7%,1);
 background-image:

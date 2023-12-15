@@ -23,7 +23,7 @@ export default async function FriendRequests() {
   );
 
   return (
-    <div className="p-6 w-full bg-sky-50 dark:bg-neutral-900 lg:w-[calc(100%-384px)]">
+    <div className="p-6 w-full bg-sky-50 dark:bg-zinc-900 lg:w-[calc(100%-384px)]">
       <h1 className="text-3xl font-bold text-blue-950 dark:text-blue-50">
         Solicitudes de mensaje
       </h1>

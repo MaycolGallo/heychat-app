@@ -16,11 +16,22 @@ export async function sendMessage(chatId: string, data: FormData) {
 
     const friendId = user?.id === userId1 ? userId2 : userId1;
 
-    const friendList = await db.smembers(`user:${user?.id}:friends`);
-    const isFriend = friendList.includes(friendId);
+    const redisMulti = db.multi();
+    redisMulti.smembers(`user:${user?.id}:friends`);
+    redisMulti.json.get(`user:${user?.id}:friends_info`,'$.friends.[*]');
+    redisMulti.get(`user:${friendId}`);
+    const [friendList, friends, friendInfo] = await redisMulti.exec() as [string[],any[],User];
 
-    const friendInfo = (await db.get(`user:${friendId}`)) as User;
+    const isFriend = new Set(friendList).has(friendId);
 
+    const friendCheck = friends.find((friend) => {
+      return friend.id === friendId
+    })
+
+    if (friendCheck?.blocked) {
+      throw new Error("No puedes mandar mensajes a este usuario");
+    }
+    
     if (!isFriend) {
       throw new Error("You are not friends");
     }
@@ -33,35 +44,56 @@ export async function sendMessage(chatId: string, data: FormData) {
     };
 
     console.log(messageData);
+    const pusherBatch = []
 
-    // pusher server trigger 
-    await pusherServer.trigger(
-      toPusherKey(`chat:${chatId}`),
-      "incoming_message",
-      messageData
-    );
+    pusherBatch.push({
+      channel: toPusherKey(`chat:${chatId}`),
+      name: "incoming_message",
+      data: messageData,
+    })
 
-    pusherServer.trigger(
-      toPusherKey(`user:${friendId}:chats`),
-      "new_message",
-      {
+    pusherBatch.push({
+      channel:toPusherKey(`user:${friendId}:chats`),
+      name: "new_message",
+      data: {
         ...messageData,
         senderEmail: friendInfo.email,
         senderImage: friendInfo.image,
         senderName: friendInfo.name,
       }
-    )
+    })
 
-    // el chat tiene id sender--reciever
-    await db.zadd(`chat:${chatId}:messages`, {
+    await pusherServer.triggerBatch(pusherBatch);
+    // pusher server trigger 
+    // await pusherServer.trigger(
+    //   toPusherKey(`chat:${chatId}`),
+    //   "incoming_message",
+    //   messageData
+    // );
+
+    // pusherServer.trigger(
+    //   toPusherKey(`user:${friendId}:chats`),
+    //   "new_message",
+    //   {
+    //     ...messageData,
+    //     senderEmail: friendInfo.email,
+    //     senderImage: friendInfo.image,
+    //     senderName: friendInfo.name,
+    //   }
+    // )
+    const pipeline = db.pipeline();
+    pipeline.zadd(`chat:${chatId}:messages`, {
       score: Date.now(),
       member: JSON.stringify(messageData),
-    });
+    })
+    await pipeline.exec();
 
     // revalidatePath(`/chats/${chatId}`);
-
+    return {
+      message: "Message sent",
+      type: "success",
+    }
   } catch (error) {
-    console.log(error);
     return { message: `Ha ocurrido un error: ${error}`, type: "error" };
   }
 }

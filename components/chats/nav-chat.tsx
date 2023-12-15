@@ -8,6 +8,7 @@ import { Skeleton } from "../ui/skeleton";
 import { AddUser } from "../AddUser";
 import { Button } from "../ui/button";
 import { SearchUsers } from "../ui/search/search-users";
+import { SearchResults } from "../ui/search/search-results";
 
 export function NavChatSkeleton() {
   return (
@@ -41,7 +42,7 @@ export function NavChat({ children }: { children: React.ReactNode }) {
     <nav
       className={`md:max-w-sm ${
         !isChatRoute && width < 768 ? "hidden" : "w-full"
-      } flex-1 border-r border-neutral-300 dark:border-neutral-800`}
+      } flex-grow border-r border-neutral-300 dark:border-neutral-800`}
     >
       <section className="flex border-t-2 border-neutral-300 dark:border-neutral-800 sticky top-0 z-10  flex-col bg-white dark:bg-neutral-900 justify-between px-4 pt-4">
         <div className="flex justify-between items-center">
@@ -58,12 +59,9 @@ export function NavChat({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         <section className="my-4 relative">
+          {/* <SearchResults /> */}
           <SearchUsers />
-          {/* <Input
-            className="rounded-xl bg-neutral-200 dark:bg-neutral-800 pl-8"
-            placeholder="Buscar"
-          />
-          <Search className="absolute w-5 h-5 left-2 top-2" /> */}
+          
         </section>
       </section>
       {children}

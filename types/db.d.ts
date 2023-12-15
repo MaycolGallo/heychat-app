@@ -31,3 +31,9 @@ type ExtendedMessage = Message & {
   senderName: string;
   senderImage?: string;
 }
+
+type Friend = {
+  id: string;
+  blocked: boolean;
+  added: number;
+};

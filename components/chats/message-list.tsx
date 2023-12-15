@@ -3,7 +3,14 @@
 import { getTimeForTimestamp } from "@/lib/getTimeChat";
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-import { useState, useEffect, memo, useRef, useLayoutEffect, useReducer } from "react";
+import {
+  useState,
+  useEffect,
+  memo,
+  useRef,
+  useLayoutEffect,
+  useReducer,
+} from "react";
 import { MessageBox } from "./mestr";
 import { flushSync } from "react-dom";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
@@ -11,23 +18,26 @@ import Dots from "../loaders/dots";
 import { ArchiveX } from "lucide-react";
 
 type MessageListProps = {
-  initialMessages: {[key: string]: Message[]}
+  initialMessages: { [key: string]: Message[] };
   sessionId: string;
   chatId: string;
 };
 
-export function EmptyMessages(){
+export function EmptyMessages() {
   return (
     <div className="h-full flex translate-y-[-175%] items-center justify-center w-full">
       <div className="flex flex-col gap-3 items-center">
-        <ArchiveX className="w-12 h-12 text-neutral-600"/>
+        <ArchiveX className="w-12 h-12 text-neutral-600" />
         <p className="text-2xl font-semibold">No hay mensajes</p>
       </div>
     </div>
-  )
+  );
 }
 
-const reducer = (state: MessageListProps['initialMessages'], action: { type: string, payload: Message}) => {
+const reducer = (
+  state: MessageListProps["initialMessages"],
+  action: { type: string; payload: Message }
+) => {
   if (!action) {
     return state;
   }
@@ -36,14 +46,14 @@ const reducer = (state: MessageListProps['initialMessages'], action: { type: str
   const { timestamp } = payload;
   const date = new Date(timestamp).toLocaleDateString();
 
-  if (type === 'ADD_MESSAGE') {
+  if (type === "ADD_MESSAGE") {
     return {
       ...state,
       [date]: [...(state[date] || []), payload],
     };
   }
 
-  if (type === 'REMOVE_MESSAGE') {
+  if (type === "REMOVE_MESSAGE") {
     const updatedMessages = {
       ...state,
       [date]: state[date].filter((message) => message.id !== payload.id),
@@ -69,11 +79,11 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {
-      dispatch({type: 'ADD_MESSAGE', payload: message});
+      dispatch({ type: "ADD_MESSAGE", payload: message });
     };
 
     const handleRemovedMessage = (message: Message) => {
-      dispatch({type: 'REMOVE_MESSAGE', payload: message});
+      dispatch({ type: "REMOVE_MESSAGE", payload: message });
     };
 
     const handleTyping = (data: any) => {
@@ -117,7 +127,11 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   }, [messages]);
 
   return (
-    <ScrollAreaChat ref={ref} className="bg-sky-50 dark:bg-zinc-900 flex h-full max-h-full flex-grow" type="always">
+    <ScrollAreaChat
+      ref={ref}
+      className="bg-sky-50 dark:bg-zinc-900 flex h-full max-h-full flex-grow"
+      type="always"
+    >
       <section
         data-chat={chatId}
         className="flex justify-end bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
@@ -125,19 +139,19 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
         {Object.keys(messages).length ? (
           <>
             {Object.entries(messages).map(([key, message]) => (
-              <ul key={key}>
-                <h1>{key}</h1>
+              <ul key={key} className="flex flex-col gap-3">
+                <span className="mx-auto text-sm bg-zinc-300 px-2 py-1 rounded dark:bg-neutral-600 dark:text-white">{key}</span>
                 {message.map((message) => {
-                const isCurrentUser = message.senderId === props.sessionId;
-                
-                return (
-                  <MessageBox
-                    message={message}
-                    isCurrentUser={isCurrentUser}
-                    key={message.id}
-                  />
-                );
-              })}
+                  const isCurrentUser = message.senderId === props.sessionId;
+
+                  return (
+                    <MessageBox
+                      message={message}
+                      isCurrentUser={isCurrentUser}
+                      key={message.id}
+                    />
+                  );
+                })}
               </ul>
             ))}
           </>
