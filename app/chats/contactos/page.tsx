@@ -17,12 +17,12 @@ export default async function Page() {
 
   const contacts = await Promise.all(
     friends.map(async (friend) => {
-      const contact = (await db.json.get(`user:${session?.user.id}:friends_info`,'$.friends[*]')) as [];
+      const contact = (await db.json.get(`user:${session?.user.id}:friends_info`,'$.friends[*]')) as Friend[];
       const matchingContact = contact.find((contact) => contact.id === friend.id);
       return {
         ...friend,
-        blocked: matchingContact.blocked,
-        added: matchingContact.added,
+        blocked: matchingContact?.blocked,
+        added: matchingContact?.added,
       }
     })
   )
