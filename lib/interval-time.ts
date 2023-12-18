@@ -12,6 +12,6 @@ export function formatTimePassed(timestamp:number) {
 
   const unitFormat = days > 31 ? "month" : days > 365 ? "year" : "day";
   // Format the time passed
-  const formattedTimePassed = rtf.format(-days, unitFormat);
+  const formattedTimePassed = rtf?.format(-days, unitFormat);
   return formattedTimePassed;
 }

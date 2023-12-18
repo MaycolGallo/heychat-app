@@ -26,6 +26,7 @@ export function FriendList({
   const { toast } = useToast();
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const [activeFriends, setActiveFriends] = useState<User[]>(friends);
+  const [lastMessages, setLastMessages] = useState<any[]>(friendLastMessage || []);
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`));
@@ -34,6 +35,9 @@ export function FriendList({
     const newFriendHandler = (newFriend: User) => {
       setActiveFriends((prev) => [...prev, newFriend]);
     }
+
+    // const handleIncomingMessage = (message: ExtendedMessage) => {
+    //   setLastMessages((prev) => [...prev, message]);
 
     const newMessageHandler = (message: ExtendedMessage) => {
       const shouldNotify =
@@ -50,6 +54,8 @@ export function FriendList({
 
     pusherClient.bind("new_message", newMessageHandler);
     pusherClient.bind('new_friend', newFriendHandler);
+    // pusherClient.bind("incoming_message", handleIncomingMessage);
+    // pusherClient.bind("message_removed", handleRemovedMessage);
     return () => {
       pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`));
       pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
@@ -77,7 +83,8 @@ export function FriendList({
             const getLastMessage = friendLastMessage?.find(
               (msg) => msg.id === friend.id
             )
-            
+            console.log('last message',getLastMessage)
+
             return (
               <li
                 className="flex items-center justify-between border gap-3 border-neutral-300 dark:border-neutral-700 rounded-lg p-4 shadow"

@@ -47,7 +47,7 @@ export async function ListContacts({ initialContacts }: Props) {
                         {contact.name}
 
                         <span className="font-normal mx-1 text-sm">
-                          &bull; agregado {formatTimePassed(contact.added)}
+                          {/* &bull; agregado {formatTimePassed(contact.added)} */}
                         </span>
                       </h3>
                       <p className="dark:text-neutral-400">{contact.email}</p>

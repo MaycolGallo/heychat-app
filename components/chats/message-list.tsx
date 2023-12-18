@@ -15,6 +15,7 @@ import { MessageBox } from "./mestr";
 import { flushSync } from "react-dom";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
 import Dots from "../loaders/dots";
+import { useRouter } from "next/navigation";
 import { ArchiveX } from "lucide-react";
 
 type MessageListProps = {
@@ -73,18 +74,23 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   const { initialMessages, chatId } = props;
   const [messages, dispatch] = useReducer(reducer, initialMessages);
   const [isTyping, setIsTyping] = useState(false);
+  const router = useRouter();
 
   console.log("messages", messages);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {
+      // router.refresh();
       dispatch({ type: "ADD_MESSAGE", payload: message });
     };
 
     const handleRemovedMessage = (message: Message) => {
+      // router.refresh();
       dispatch({ type: "REMOVE_MESSAGE", payload: message });
     };
+
+    // router.refresh();
 
     const handleTyping = (data: any) => {
       const clearInterval = 900;

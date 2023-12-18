@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash } from "lucide-react";
+import { Trash,Copy } from "lucide-react";
 import {
   useCallback,
   useEffect,
@@ -55,6 +55,15 @@ export function Dropdon(props: Props) {
     });
   }, [chatId, message]);
 
+  const copyToClipboard = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(message.text);
+      setOpen(false);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+    }
+  }, [message]);
+
   useLayoutEffect(() => {
     function calculatePosition() {
       if (dropwdoneRef.current) {
@@ -92,13 +101,13 @@ export function Dropdon(props: Props) {
     <div className="relative h-max">
       <div
         ref={dropwdoneRef}
-        className={`absolute z-10 border shadow backdrop-blur-md border-neutral-400 rounded-lg w-36 right-0 bg-white/75 ${
+        className={`absolute z-10 border shadow backdrop-blur-md border-neutral-400 rounded-lg w-36 right-0 bg-white/75 drk:text-neutral-50 dark:bg-neutral-700 ${
           dropdownPosition === "top" ? "bottom-9" : "top-full"
         }`}
       >
         <ul className="p-1 flex flex-col gap-3">
           <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded text-red-500">
-            <Trash className="w-4 h-4 mr-2 shrink-0" />
+            <Trash className="w-4 h-4 mr-2 shrink-0 text-red-500" />
             <button
               type="button"
               // onClick={() => deleteMessage(chatId,message)}
@@ -106,6 +115,16 @@ export function Dropdon(props: Props) {
               className="inline-flex text-sm text-neutral-700"
             >
               Eliminar
+            </button>
+          </li>
+          <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded">
+            <Copy className="w-4 h-4 mr-2 shrink-0 text-neutral-500" />
+            <button
+              type="button"
+              onClick={copyToClipboard}
+              className="inline-flex text-sm text-neutral-700"
+            >
+              Copiar
             </button>
           </li>
         </ul>

@@ -16,6 +16,8 @@ export async function sendMessage(chatId: string, data: FormData) {
 
     const friendId = user?.id === userId1 ? userId2 : userId1;
 
+    const startTime = performance.now();
+
     const redisMulti = db.multi();
     redisMulti.smembers(`user:${user?.id}:friends`);
     redisMulti.json.get(`user:${user?.id}:friends_info`,'$.friends.[*]');
@@ -63,7 +65,7 @@ export async function sendMessage(chatId: string, data: FormData) {
       }
     })
 
-    await pusherServer.triggerBatch(pusherBatch);
+    
     // pusher server trigger 
     // await pusherServer.trigger(
     //   toPusherKey(`chat:${chatId}`),
@@ -87,6 +89,11 @@ export async function sendMessage(chatId: string, data: FormData) {
       member: JSON.stringify(messageData),
     })
     await pipeline.exec();
+
+    const endTime = performance.now();
+    const duration = (endTime - startTime) / 1000;
+
+    console.log(`Message sent in ${duration} seconds`);
 
     // revalidatePath(`/chats/${chatId}`);
     return {

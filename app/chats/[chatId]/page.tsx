@@ -90,10 +90,11 @@ export default async function Chat({ params }: PageProps) {
     db.get(`user:${chatPartnerId}`) as Promise<User>,
     getInitialMessages(chatId) as unknown as Promise<Record<string, Message[]>>,
     isContactBlocked(user?.id!, chatPartnerId),
-  ]);
+  ]).catch(() => {
+    notFound();
+  });
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
       <div className="w-full flex flex-col h-[calc(100dvh-72px)] flex-grow lg:w-[calc(100%-384px)]">
         <HeaderChat
           name={chatPartner?.name!}
@@ -115,6 +116,5 @@ export default async function Chat({ params }: PageProps) {
         />
         <ChatInput chatId={chatId} userId={user?.id!} isBlocked={blocked} />
       </div>
-    </Suspense>
   );
 }

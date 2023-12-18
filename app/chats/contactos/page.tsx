@@ -27,11 +27,13 @@ export default async function Page() {
     })
   )
 
+  console.log(contacts)
+
   return (
     <div className="p-6 w-full lg:w-[calc(100%-384px)] bg-sky-50 dark:bg-zinc-900">
      <div className="space-y-3">
      <h1 className="text-3xl font-bold text-blue-950 dark:text-blue-50">Tus Contactos</h1>
-      <p>Tienes {numContacts} contactos</p>
+      <p>Tienes {numContacts} contacto(s)</p>
      </div>
       <Tabs defaultValue="account" className="w-full my-4">
         <TabsList>

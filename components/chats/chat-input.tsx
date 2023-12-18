@@ -128,6 +128,7 @@ export function ChatInput({
             <TextareaAutosize
               minRows={1}
               maxRows={4}
+              required
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               name="message"
