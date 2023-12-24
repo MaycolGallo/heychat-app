@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { Loader, Send } from "lucide-react";
 import { sendMessage } from "@/app/actions/sendMessage";
 import throttle from "lodash.throttle";
 import { useActionState } from "@/lib/use-form-state";
 import TextareaAutosize from "react-textarea-autosize";
 
-export function ChatInput({
+export const ChatInput = memo(function ChatInput({
   chatId,
   userId,
   isBlocked,
@@ -148,10 +148,10 @@ export function ChatInput({
           </label>
         </form>
       ) : isBlocked === "te han bloqueado" ? (
-        <p className="text-center text-red-500">bloqueado</p>
+        <p className="text-center text-red-500 px-4 py-2">No puedes responder en este chat</p>
       ) : (
-        <p className="text-center text-red-500">has bloqueado</p>
+        <p className="text-center px-4 py-2 text-red-500">Has bloqueado a este usuario</p>
       )}
     </section>
   );
-}
+});

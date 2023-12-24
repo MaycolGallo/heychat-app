@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, useOptimistic } from "react";
 import { BlockUser } from "./block-user";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -18,8 +18,8 @@ type Props = {
   sessionId?: string;
 };
 
-export async function ListContacts({ initialContacts }: Props) {
-  const session = await getServerSession(authOptions);
+export function ListContacts({ initialContacts,sessionId }: Props) {
+  // const [contact, setContact] = useOptimistic(initialContacts);
   const numNotBlocked = initialContacts.filter(
     (contact) => !contact.blocked
   ).length
@@ -56,7 +56,7 @@ export async function ListContacts({ initialContacts }: Props) {
                       type="block"
                       contactId={contact.id}
                       name={contact.name}
-                      sessionId={session?.user.id}
+                      sessionId={sessionId}
                     />
                   </div>
                 </article>

@@ -81,7 +81,6 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {
-      // router.refresh();
       dispatch({ type: "ADD_MESSAGE", payload: message });
     };
 
@@ -89,8 +88,6 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
       // router.refresh();
       dispatch({ type: "REMOVE_MESSAGE", payload: message });
     };
-
-    // router.refresh();
 
     const handleTyping = (data: any) => {
       const clearInterval = 900;
@@ -146,7 +143,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
           <>
             {Object.entries(messages).map(([key, message]) => (
               <ul key={key} className="flex flex-col gap-3">
-                <span className="mx-auto text-sm bg-zinc-300 px-2 py-1 rounded dark:bg-neutral-600 dark:text-white">{key}</span>
+                <span className="mx-auto text-sm bg-zinc-300 px-3 py-1 rounded-full dark:bg-neutral-600 dark:text-white">{key}</span>
                 {message.map((message) => {
                   const isCurrentUser = message.senderId === props.sessionId;
 

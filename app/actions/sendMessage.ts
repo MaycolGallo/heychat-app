@@ -45,7 +45,6 @@ export async function sendMessage(chatId: string, data: FormData) {
       timestamp: Date.now(),
     };
 
-    console.log(messageData);
     const pusherBatch = []
 
     pusherBatch.push({
@@ -65,24 +64,8 @@ export async function sendMessage(chatId: string, data: FormData) {
       }
     })
 
-    
-    // pusher server trigger 
-    // await pusherServer.trigger(
-    //   toPusherKey(`chat:${chatId}`),
-    //   "incoming_message",
-    //   messageData
-    // );
+    pusherServer.triggerBatch(pusherBatch);
 
-    // pusherServer.trigger(
-    //   toPusherKey(`user:${friendId}:chats`),
-    //   "new_message",
-    //   {
-    //     ...messageData,
-    //     senderEmail: friendInfo.email,
-    //     senderImage: friendInfo.image,
-    //     senderName: friendInfo.name,
-    //   }
-    // )
     const pipeline = db.pipeline();
     pipeline.zadd(`chat:${chatId}:messages`, {
       score: Date.now(),

@@ -35,13 +35,13 @@ export function OptionsMenu(props: Props) {
   return (
     <ul className="p-1 flex flex-col gap-3">
       <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded text-red-500">
-        <Trash className="w-4 h-4 mr-2 shrink-0 text-red-500" />
         <button
           type="button"
           // onClick={() => deleteMessage(chatId,message)}
           onClick={deleteMessage}
           className="inline-flex text-sm text-neutral-700"
         >
+        <Trash className="w-4 h-4 mr-2 shrink-0 text-red-500" />
           Eliminar
         </button>
       </li>

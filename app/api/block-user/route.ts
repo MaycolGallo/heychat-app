@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -10,9 +11,10 @@ export async function POST(req: Request) {
         `user:${body.userId}:friends_info`,
         "$.friends.[*]"
       ) as Promise<Friend[]>,
-      db.json.get(`user:${body.contactId}:friends_info`, "$.friends.[*]") as Promise<
-        Friend[]
-      >,
+      db.json.get(
+        `user:${body.contactId}:friends_info`,
+        "$.friends.[*]"
+      ) as Promise<Friend[]>,
     ]);
 
     const userIndex = userFriends.findIndex((friend) => {
@@ -46,10 +48,16 @@ export async function POST(req: Request) {
     if (userIndex !== -1) {
       await pipeline.exec();
     }
-    revalidatePath("/chats/contactos");
-    
-    return new Response(JSON.stringify({ success: true,friend:isFriendBlocked }), { status: 200 });
+    // revalidatePath("/chats/contactos");
+
+    return new Response(
+      JSON.stringify({ success: true, friend: isFriendBlocked }),
+      { status: 200 }
+    );
   } catch (e) {
-    return new Response(JSON.stringify({ error: e as Error }), { status: 500 });
+    return NextResponse.json(
+      { success: false, error: e as Error },
+      { status: 500 }
+    );
   }
 }

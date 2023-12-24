@@ -18,8 +18,6 @@ export function MessageBox(props: MessageItem) {
   const [contentOpen, setContentOpen] = useState(false);
   const path = useParams();
   const ref = useRef<HTMLDivElement | null>(null);
-  const containerHeight =
-    ref.current?.parentElement?.parentElement?.parentElement?.clientHeight || 0;
 
   const { message, isCurrentUser } = props;
   return (
@@ -66,7 +64,7 @@ export function MessageBox(props: MessageItem) {
           // </div>
         ) : null}
         <span
-          className={`inline-block max-w-[275px] relative px-3 py-1.5 rounded-2xl ${
+          className={`inline-block animate-in fade-in max-w-[275px] relative px-3 py-1.5 rounded-2xl ${
             isCurrentUser
               ? "bg-blue-600 text-white rounded-br-sm"
               : "bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-100 text-black rounded-tl-sm"

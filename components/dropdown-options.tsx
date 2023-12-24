@@ -89,7 +89,7 @@ export function DropdownOptions(props: Props) {
 
   return (
     <Popover>
-      <PopoverTrigger className="hover:ring-purple-700  hover:ring-2 rounded-full ring-offset-2">
+      <PopoverTrigger className="hover:ring-blue-700  hover:ring-2 rounded-full ring-offset-2 dark:ring-offset-black">
         <span>
           <Image
             src={imgUrl}

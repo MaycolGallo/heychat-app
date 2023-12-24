@@ -1,4 +1,5 @@
 "use client";
+import { blockUser } from "@/app/actions/block-user";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,8 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useActionState } from "@/lib/use-form-state";
 import { cn } from "@/lib/utils";
-import { Ban, ShieldCheck } from "lucide-react";
+import { Ban, Loader, ShieldCheck } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import { useCallback, useState } from "react";
 
@@ -32,22 +34,32 @@ type Props = {
 export function BlockUser(props: Props) {
   const { name, contactId, sessionId, type } = props;
   const [open, setOpen] = useState(false);
+  const [handleBlock, { loading, error, data }] = useActionState(blockUser);
 
-  const blockUser = useCallback(async () => {
-    const res = await fetch(`/api/block-user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contactId,
-        userId: sessionId,
-      }),
-    });
-    if (res.status === 200) {
+  const BlockUser = useCallback(async (contactId: string, sessionId:string) => {
+    if (data?.success) {
       setOpen(false);
     }
-  }, [contactId, sessionId]);
+    await handleBlock( contactId, sessionId );
+    console.log(contactId, sessionId)
+  },[data?.success, handleBlock]);
+
+  // const blockUser = useCallback(async () => {
+  //   const res = await fetch(`/api/block-user`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       contactId,
+  //       userId: sessionId,
+  //     }),
+  //   });
+  //   if (res.status === 200) {
+  //     setOpen(false);
+  //   }
+  // }, [contactId, sessionId]);
+  console.log(data)
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -90,9 +102,15 @@ export function BlockUser(props: Props) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {/* <AlertDialogAction onClick={blockUser}>Continue</AlertDialogAction> */}
-          <Button onClick={blockUser}>Continuar</Button>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <Button
+            disabled={loading}
+            // onClick={() => handleBlock(contactId, sessionId!)}
+            onClick={() => BlockUser(contactId, sessionId!)}
+          >
+            {loading && <Loader className="w-4 animate-spin h-4 mr-2" />}
+            <span>{type === "block" ? "Bloquear" : "Desbloquear"}</span>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

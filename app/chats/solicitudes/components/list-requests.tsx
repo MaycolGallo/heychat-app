@@ -2,10 +2,13 @@
 
 import { pusherClient } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { AcceptButton } from "./accept-btn";
 import Image from "next/image";
-import { UserX } from "lucide-react";
+import { UserCheck2, UserX, UserX2 } from "lucide-react";
+import { handleFriendRequest } from "@/app/actions/handle-friends";
+import { useActionState } from "@/lib/use-form-state";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   initialRequests: Requests[];
@@ -21,8 +24,21 @@ function EmptyList() {
   );
 }
 
-export default function ListRequests({ initialRequests, sessionId }: Props) {
+export function ListRequests({ initialRequests, sessionId }: Props) {
   const [requests, setRequests] = useState(initialRequests);
+  const [handleFriend, { loading, error, data }] =
+    useActionState(handleFriendRequest);
+
+  async function processFriend(idToProcess: string, key: string) {
+    if (key === "add" || key === "remove") {
+      startTransition(() => {
+        setRequests((current) =>
+          current.filter((request) => request.senderId !== idToProcess)
+        );
+      });
+    }
+    await handleFriend(idToProcess, key);
+  }
 
   useEffect(() => {
     pusherClient.subscribe(
@@ -30,7 +46,6 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
     );
 
     const newFriendRequestHandler = (newFriendRequest: Requests) => {
-      console.log("newFriendRequest", newFriendRequest);
       setRequests((current) => [...current, newFriendRequest]);
     };
 
@@ -70,9 +85,25 @@ export default function ListRequests({ initialRequests, sessionId }: Props) {
                     alt={`${requeser.senderEmail} imagen perfil `}
                   />
                 )}
-                <span>{requeser.senderEmail}</span>
+                <span className="truncate">{requeser.senderEmail}</span>
               </div>
-              <AcceptButton setRequests={setRequests} idToProcess={requeser.senderId} />
+              <div className="flex items-center gap-2">
+                <Button
+                  disabled={loading}
+                  onClick={() => processFriend(requeser.senderId, "add")}
+                  className="px-3 py-1 dark:text-white bg-violet-500 hover:bg-violet-600 dark:bg-violet-600 dark:hover:bg-violet-700"
+                >
+                  <UserCheck2 className="w-5 h-5" />
+                </Button>
+                <Button
+                  disabled={loading}
+                  onClick={() => processFriend(requeser.senderId, "remove")}
+                  className="px-3 hover:bg-red-600 dark:text-white py-1 bg-red-500 dark:bg-red-600 dark:hover:bg-red-700"
+                >
+                  <UserX2 className="w-5 h-5" />
+                </Button>{" "}
+              </div>
+              {/* <AcceptButton setRequests={setOptimistic} idToProcess={requeser.senderId} /> */}
             </li>
           ))}
         </ul>

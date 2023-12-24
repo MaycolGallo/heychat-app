@@ -17,7 +17,7 @@ export default function Error({
 
   return (
     <div className="flex flex-col h-[calc(100dvh-72px)] justify-center bg-sky-50 dark:text-neutral-50 dark:bg-zinc-900  items-center w-full md:max-w-[calc(100%-348px)]">
-      <div>
+      <div className="flex flex-col items-center">
         <Image
           src={"https://img.icons8.com/ios-filled/100/FA5252/error--v1.png"}
           width={100}

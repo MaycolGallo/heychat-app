@@ -2,7 +2,8 @@ import { db } from "@/lib/db";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { Suspense } from "react";
-import ListRequests from "./components/list-requests";
+// import ListRequests from "./components/list-requests";
+import {ListRequests} from "./components/list-requests";
 
 export default async function FriendRequests() {
   const session = await getServerSession(authOptions);

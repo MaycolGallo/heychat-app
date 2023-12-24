@@ -21,7 +21,7 @@ export async function ListBlocked({ initialContacts }: Props) {
   const session = await getServerSession(authOptions);
   const numBlocked = initialContacts.filter(
     (contact) => contact.blocked
-  ).length
+  ).length;
   return (
     <Suspense fallback={<div>Loading...</div>}>
       {numBlocked > 0 ? (

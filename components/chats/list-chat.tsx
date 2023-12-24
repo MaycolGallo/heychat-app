@@ -1,5 +1,4 @@
 import { MessageSquarePlus, ListFilter, Search } from "lucide-react";
-import { Input } from "../ui/input";
 import { FriendList } from "./friend-list";
 import { Suspense } from "react";
 import { authOptions } from "@/lib/auth";

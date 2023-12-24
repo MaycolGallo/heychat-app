@@ -1,11 +1,11 @@
 export function EmptyList() {
   return (
-    <div className="w-full p-4">
+    <div className="w-full flex items-center justify-center flex-col gap-4 p-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="icon icon-tabler icon-tabler-address-book-off"
-        width={24}
-        height={24}
+        width={48}
+        height={48}
         viewBox="0 0 24 24"
         strokeWidth={2}
         stroke="currentColor"
@@ -22,7 +22,7 @@ export function EmptyList() {
         <path d="M4 16h3" />
         <path d="M3 3l18 18" />
       </svg>
-      <h1>Lista Vacia</h1>
+      <h1 className="text-3xl font-semibold">Lista Vacia</h1>
     </div>
   );
 }
