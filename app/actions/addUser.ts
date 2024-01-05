@@ -29,22 +29,30 @@ export async function addUser(data: FormData) {
       `user:${user}:incoming_friend_requests`,
       session?.user.id
     );
+    pipeline.sismember(`user:${session?.user.id}:incoming_friend_requests`, user);
+    pipeline.sismember(`user:${session?.user.id}:friends`, user);
     pipeline.sismember(`user:${user}:friends`, session?.user.id);
+
     pipeline.json.get(`user:${user}:friends_info`, "$.friends.[*]");
-   
-    const [isAlreadySent, isAlreadyFriend, friends] = await pipeline.exec<any>();
+
+    const [isAlreadySent, myRequests, myFriend, isAlreadyFriend, friends] =
+      await pipeline.exec<any>();
 
     if (friends) {
-      const isnotblocked = friends.find((friend:Friend) => {
-        return friend.id === session?.user.id
-      })
+      const isnotblocked = friends.find((friend: Friend) => {
+        return friend.id === session?.user.id;
+      });
       if (isnotblocked?.blocked === true) {
         throw new Error("No puedes enviar una solicitud a este usuario");
       }
     }
 
-    if (isAlreadySent || isAlreadyFriend) {
+    if ((myFriend && isAlreadyFriend)) {
       throw new Error("Ya has enviado una solicitud de amistad a este usuario");
+    }
+
+    if (isAlreadySent || myRequests) {
+      throw new Error("Hay un solicitud de amistad pendiente");
     }
 
     await pusherServer.trigger(
@@ -59,7 +67,7 @@ export async function addUser(data: FormData) {
     );
 
     const multi = db.multi();
-    multi.sadd(`user:${user}:incoming_friend_requests`, session?.user.id)
+    multi.sadd(`user:${user}:incoming_friend_requests`, session?.user.id);
 
     const result = await multi.exec();
 

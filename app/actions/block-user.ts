@@ -46,9 +46,11 @@ export async function blockUser(contactId: string, userId: string) {
       );
     }
 
-    if (userIndex !== -1) {
-      await pipeline.exec();
-    }
+    // if (userIndex !== -1) {
+    //   await pipeline.exec();
+    // }
+
+    await pipeline.exec();
 
     revalidatePath("/chats/contactos");
 

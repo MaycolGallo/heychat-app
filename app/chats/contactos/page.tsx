@@ -6,15 +6,9 @@ import { getFriendList } from "@/lib/getFriendList";
 import { ListContacts } from "./components/list-contacts";
 import { Suspense } from "react";
 import { ListBlocked } from "./components/list-block";
+import { cache } from "react";
 
-export default async function Page() {
-  const session = await getServerSession(authOptions);
-
-  const [numContacts, friends] = await Promise.all([
-    db.scard(`user:${session?.user?.id}:friends`),
-    getFriendList(session?.user?.id!),
-  ]);
-
+const getContacts = cache(async (friends: User[], session: any) => {
   const contacts = await Promise.all(
     friends.map(async (friend) => {
       const contact = (await db.json.get(
@@ -31,8 +25,18 @@ export default async function Page() {
       };
     })
   );
+  return contacts;
+})
 
-  console.log(contacts);
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+
+  const [numContacts, friends] = await Promise.all([
+    db.scard(`user:${session?.user?.id}:friends`),
+    getFriendList(session?.user?.id!),
+  ]);
+
+  const contacts = await getContacts(friends, session);
 
   return (
     <div className="p-6 w-full lg:w-[calc(100%-384px)] bg-sky-50 dark:bg-zinc-900">

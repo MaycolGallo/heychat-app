@@ -42,7 +42,7 @@ export function FriendItem({
         <div className="flex flex-1 flex-col justify-center">
           <h1 className="font-semibold">{friend.name}</h1>
           {getLastMessage?.lastMessage && (
-            <p className="text-sm max-w-[200px] truncate text-neutral-700">
+            <p className="text-sm max-w-[200px] truncate text-neutral-700 dark:text-neutral-400">
               {getLastMessage.lastMessage.text}
             </p>
           )}

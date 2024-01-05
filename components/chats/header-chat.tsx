@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { ChatLocation } from "../chat-location";
 import { BackButton } from "../ui/back-button";
+import { UserStatus } from "../user-status";
 
 
 type FriendInfo = {
@@ -31,9 +32,12 @@ export async function HeaderChat(props: FriendInfo) {
         <div className="text-sm sm:text-base">
           <h2 className="font-semibold">{props?.name}</h2>
           <p>{props?.email}</p>
-          <Suspense fallback={<Skeleton className="h-4 w-24" />}>
-            <ChatLocation userId={props.id}/>
+          <Suspense fallback={"Conectando..."}>
+            <UserStatus userId={props.id} />
           </Suspense>
+          {/* <Suspense fallback={<Skeleton className="h-4 w-24" />}>
+            <ChatLocation userId={props.id}/>
+          </Suspense> */}
 
         </div>
       </div>

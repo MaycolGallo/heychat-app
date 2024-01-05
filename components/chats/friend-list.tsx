@@ -5,7 +5,7 @@ import { Await } from "../buildui/await";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { linkChatSorted, toPusherKey } from "@/lib/utils";
-import React, { useEffect, Suspense, useState, memo } from "react";
+import React, { useEffect, Suspense, useState, memo, useMemo } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { useToast } from "../ui/use-toast";
 import { ScrollArea } from "../ui/scroll-area";
@@ -29,6 +29,13 @@ export const FriendList = memo(function FriendList({
   const [activeFriends, setActiveFriends] = useState<User[]>(friends);
   const [lastMessages, setLastMessages] = useState<any[]>(
     friendLastMessage || []
+  );
+
+  const uniqueFriends = useMemo(
+    () => [
+      ...new Map(activeFriends.map((friend) => [friend.id, friend])).values(),
+    ],
+    [activeFriends]
   );
 
   useEffect(() => {
@@ -79,9 +86,9 @@ export const FriendList = memo(function FriendList({
 
   return (
     <>
-      {activeFriends.length ? (
+      {uniqueFriends.length ? (
         <ul className=" flex flex-col gap-4 p-4">
-          {activeFriends.sort().map((friend) => {
+          {uniqueFriends.sort().map((friend) => {
             const unseenCount = unseenMessages.filter(
               (msg) => msg.senderId === friend.id
             ).length;

@@ -6,6 +6,7 @@ import { sendMessage } from "@/app/actions/sendMessage";
 import throttle from "lodash.throttle";
 import { useActionState } from "@/lib/use-form-state";
 import TextareaAutosize from "react-textarea-autosize";
+import { useParty } from "@/party/useParty";
 
 export const ChatInput = memo(function ChatInput({
   chatId,
@@ -20,88 +21,20 @@ export const ChatInput = memo(function ChatInput({
   const sendMessageChat = sendMessage.bind(null, chatId);
   const [sendMessageState, { loading }] = useActionState(sendMessageChat);
   const textareaRef = useRef<HTMLFormElement | null>(null);
+  const { socket } = useParty(chatId);
 
   const abortRef = useRef<AbortController | null>(null);
 
   const handleSubmit = async (formData: FormData) => {
     await sendMessageState(formData);
     setMessage("");
+    const mess = formData.get("message")?.toString();
+    socket.send(JSON.stringify({ type: "fresh_message", newMessage: mess }));
   };
 
-  const tohle = throttle(
-    async () => {
-      try {
-        await fetch(`/api/typping`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            chatId,
-            userId,
-          }),
-          // signal,
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    5000,
-    { trailing: true, leading: true }
-  );
-
-  const handleTyping = async () => {
-    let canPublish = true;
-    let throttleTime = 200;
-
-    if (abortRef.current) {
-      abortRef.current.abort();
-    }
-
-    abortRef.current = new AbortController();
-    const signal = abortRef.current.signal;
-
-    try {
-      await fetch(`/api/typping`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          chatId,
-          userId,
-        }),
-        signal,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-
-    // if (canPublish) {
-    //   try {
-    //     const response = await fetch(`/api/typping`, {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         chatId,
-    //         userId,
-    //       }),
-    //       signal,
-    //     });
-    //     if (response.ok) {
-    //       canPublish = false;
-
-    //       setTimeout(() => {
-    //         canPublish = true;
-    //       }, throttleTime);
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-  };
+  function isTypping() {
+    socket.send(JSON.stringify({ type: "typing", userId }));
+  }
 
   return (
     <section className="sticky bottom-0 bg-neutral-50 dark:border-neutral-700/70 dark:bg-neutral-900 border-t border-neutral-300">
@@ -129,6 +62,8 @@ export const ChatInput = memo(function ChatInput({
               minRows={1}
               maxRows={4}
               required
+              // onKeyUp={throttle(isTypping, 500)}
+              onKeyUp={isTypping}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               name="message"
@@ -148,9 +83,13 @@ export const ChatInput = memo(function ChatInput({
           </label>
         </form>
       ) : isBlocked === "te han bloqueado" ? (
-        <p className="text-center text-red-500 px-4 py-2">No puedes responder en este chat</p>
+        <p className="text-center text-red-500 px-4 py-2">
+          No puedes responder en este chat
+        </p>
       ) : (
-        <p className="text-center px-4 py-2 text-red-500">Has bloqueado a este usuario</p>
+        <p className="text-center px-4 py-2 text-red-500">
+          Has bloqueado a este usuario
+        </p>
       )}
     </section>
   );

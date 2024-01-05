@@ -74,13 +74,13 @@ export function SearchUsers({ userId }: { userId?: string }) {
           // onBlur={() => setOpen(false)}
         />
       </label>
-      {open ? (
-        <div className="w-full absolute border min-h-[100px] p-4 translate-y-3 backdrop-blur-md rounded-lg border-neutral-300 dark:border-neutral-700 animate-in fade-in max-h-64 dark:bg-neutral-900/5  overflow-y-auto">
+      { deferredSearch.length > 3 ? (
+        <div className="w-full absolute border min-h-[100px] p-2 translate-y-3 backdrop-blur-md rounded-lg border-neutral-300 dark:border-neutral-700 animate-in fade-in max-h-64 dark:bg-neutral-900/5  overflow-y-auto">
           {deferredSearch.length ? (
-            <h1 className="my-1">Results for {deferredSearch}</h1>
+            <h1 className="mb-1.5">{`Resultados para "${deferredSearch}"`}</h1>
           ) : null}
 
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-3">
             {results.length === 0 ? (
               <div className="flex items-center justify-center">
                 <h1 className="text-xl font-semibold">Sin Resultados</h1>
@@ -94,7 +94,7 @@ export function SearchUsers({ userId }: { userId?: string }) {
             ) : (
               <>
                 {results.map((result: any) => (
-                  <li className="flex items-center" key={result.item.id}>
+                  <li className="flex hover:bg-neutral-300 dark:hover:bg-neutral-600 px-2 py-2 rounded items-center" key={result.item.id}>
                     <Link
                       href={`/chats/${linkChatSorted(
                         data?.user.id!,

@@ -9,11 +9,9 @@ import { Skeleton } from "../ui/skeleton";
 import { NavChat } from "./nav-chat";
 import { db } from "@/lib/db";
 import { linkChatSorted } from "@/lib/utils";
+import { cache } from "react";
 
-export async function UserListChat() {
-  const session = await getServerSession(authOptions);
-  const friends = await getFriendList(session?.user?.id!);
-
+const listLastMessages = cache(async (friends: User[], session: any) => {
   const friendLastMessages = await Promise.all(
     friends.map(async (friend) => {
       const [lastMessage] = (await db.zrange(
@@ -27,6 +25,14 @@ export async function UserListChat() {
       };
     })
   );
+  return friendLastMessages;
+})
+
+export async function UserListChat() {
+  const session = await getServerSession(authOptions);
+  const friends = await getFriendList(session?.user?.id!);
+
+  const friendLastMessages = await listLastMessages(friends, session);
 
   return (
     <NavChat>

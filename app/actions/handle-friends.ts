@@ -34,9 +34,9 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
       db.sismember(`user:${user}:incoming_friend_requests`, idToUserToAdd),
     ]);
 
-    if (isAlreadyFriend) {
-      throw new Error("Already friends");
-    }
+    // if (isAlreadyFriend) {
+    //   throw new Error("Already friends so no way lil bro");
+    // }
 
     // verifica si existe a friend request from this user
     if (!hasFriendRequest) {

@@ -20,6 +20,7 @@ type Props = {
 export function DropdownOptions(props: Props) {
   const { imgUrl, userId, email, name } = props;
   const { theme, setTheme } = useTheme();
+  
 
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {

@@ -17,6 +17,7 @@ import { ScrollAreaChat } from "../ui/chat-scroll-area";
 import Dots from "../loaders/dots";
 import { useRouter } from "next/navigation";
 import { ArchiveX } from "lucide-react";
+import { useParty } from "@/party/useParty";
 
 type MessageListProps = {
   initialMessages: { [key: string]: Message[] };
@@ -75,8 +76,8 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   const [messages, dispatch] = useReducer(reducer, initialMessages);
   const [isTyping, setIsTyping] = useState(false);
   const router = useRouter();
+  const { socket } = useParty(chatId);
 
-  console.log("messages", messages);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -120,6 +121,30 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
     };
   }, [chatId, props.sessionId]);
 
+  useEffect(() => {
+    const handleTyping = (event:MessageEvent)=>{
+      const message = JSON.parse(event.data);
+      console.log(message);
+      if (message.type === 'typing') {
+        const clearInterval = 900;
+          let clearTimerId;
+
+          if (message.userId !== props.sessionId) {
+            setIsTyping(true);
+
+            clearTimeout(clearTimerId);
+            clearTimerId = setTimeout(() => {
+              setIsTyping(false);
+            }, clearInterval);
+          }
+      }
+    }
+    socket.addEventListener("message", handleTyping)
+
+    return () => socket.removeEventListener("message", handleTyping)
+
+  },[socket,props.sessionId])
+
   useLayoutEffect(() => {
     if (!ref.current) return;
     ref.current.scrollBy({
@@ -137,7 +162,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
     >
       <section
         data-chat={chatId}
-        className="flex justify-end bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
+        className="flex justify-end max-w-screen-lg mx-auto bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
       >
         {Object.keys(messages).length ? (
           <>
@@ -162,8 +187,8 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
           <EmptyMessages />
         )}
         {isTyping && (
-          <div className="flex fixed animate-in slide-in-from-bottom-0 animate-out slide-out-to-bottom-48 bottom-20 left-1/2 justify-start">
-            <span className="bg-neutral-300 w-16 p-2 rounded-md">
+          <div className="inline-flex items-center fixed animate-in slide-in-from-bottom-0 bottom-20 left-1/2 justify-center">
+            <span className="bg-neutral-300 dark:text-neutral-100 dark:bg-neutral-600 px-4 py-2 rounded-full">
               <Dots />
             </span>
           </div>

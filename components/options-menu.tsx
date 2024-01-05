@@ -34,7 +34,7 @@ export function OptionsMenu(props: Props) {
   }, [message]);
   return (
     <ul className="p-1 flex flex-col gap-3">
-      <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded text-red-500">
+      <li className="flex px-4 py-2 items-center hover:bg-red-300 rounded text-red-500">
         <button
           type="button"
           // onClick={() => deleteMessage(chatId,message)}
@@ -45,12 +45,12 @@ export function OptionsMenu(props: Props) {
           Eliminar
         </button>
       </li>
-      <li className="flex px-4 py-2 items-center hover:bg-neutral-300 rounded">
+      <li className="flex px-4 py-2 items-center hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded">
         <Copy className="w-4 h-4 mr-2 shrink-0 text-neutral-500" />
         <button
           type="button"
           onClick={copyToClipboard}
-          className="inline-flex text-sm text-neutral-700"
+          className="inline-flex text-sm text-neutral-700 dark:text-neutral-300"
         >
           Copiar
         </button>

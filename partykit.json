@@ -1,0 +1,9 @@
+{
+  "$schema": "https://www.partykit.io/schema.json",
+  "name": "heychat-party",
+  "main": "party/index.ts",
+  "parties":{
+    "conexions":"party/conexions.ts"
+  },
+  "compatibilityDate": "2024-01-02"
+}
