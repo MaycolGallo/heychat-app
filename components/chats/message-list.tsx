@@ -104,29 +104,27 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
       }
     };
 
-    pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
-    pusherClient.subscribe(toPusherKey(`chat:${chatId}:messages`));
+    // pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
+    // pusherClient.subscribe(toPusherKey(`chat:${chatId}:messages`));
     // pusherClient.subscribe('message_typping');
 
-    pusherClient.bind("incoming_message", handleIncomingMessage);
-    pusherClient.bind("message_removed", handleRemovedMessage);
-    pusherClient.bind("user_typping", handleTyping);
+    // pusherClient.bind("incoming_message", handleIncomingMessage);
+    // pusherClient.bind("message_removed", handleRemovedMessage);
 
     return () => {
-      pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
-      pusherClient.unsubscribe(toPusherKey(`chat:${chatId}:messages`));
-      pusherClient.unbind("incoming_message", handleIncomingMessage);
-      pusherClient.unbind("message_removed", handleRemovedMessage);
-      pusherClient.unbind("user_typping", handleTyping);
+      // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
+      // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}:messages`));
+      // pusherClient.unbind("incoming_message", handleIncomingMessage);
+      // pusherClient.unbind("message_removed", handleRemovedMessage);
     };
   }, [chatId, props.sessionId]);
 
   useEffect(() => {
-    const handleTyping = (event:MessageEvent)=>{
+    const handleSocket = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
-      console.log(message);
-      if (message.type === 'typing') {
-        const clearInterval = 900;
+      switch (message.type) {
+        case "typing":
+          const clearInterval = 900;
           let clearTimerId;
 
           if (message.userId !== props.sessionId) {
@@ -137,13 +135,21 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
               setIsTyping(false);
             }, clearInterval);
           }
+          break;
+        case "add_message":
+          dispatch({ type: "ADD_MESSAGE", payload: message.message });
+          break;
+        case "delete_message":
+          dispatch({ type: "REMOVE_MESSAGE", payload: message.message });
+          break;
+        default:
+          break;
       }
-    }
-    socket.addEventListener("message", handleTyping)
+    };
+    socket.addEventListener("message", handleSocket);
 
-    return () => socket.removeEventListener("message", handleTyping)
-
-  },[socket,props.sessionId])
+    return () => socket.removeEventListener("message", handleSocket);
+  }, [socket, props.sessionId]);
 
   useLayoutEffect(() => {
     if (!ref.current) return;
@@ -168,7 +174,9 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
           <>
             {Object.entries(messages).map(([key, message]) => (
               <ul key={key} className="flex flex-col gap-3">
-                <span className="mx-auto text-sm bg-zinc-300 px-3 py-1 rounded-full dark:bg-neutral-600 dark:text-white">{key}</span>
+                <span className="mx-auto text-sm bg-zinc-300 px-3 py-1 rounded-full dark:bg-neutral-600 dark:text-white">
+                  {key}
+                </span>
                 {message.map((message) => {
                   const isCurrentUser = message.senderId === props.sessionId;
 

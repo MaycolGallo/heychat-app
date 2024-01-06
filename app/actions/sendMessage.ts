@@ -6,8 +6,10 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { pusherServer } from "@/lib/pusher";
 import { toPusherKey } from "@/lib/utils";
+import { Party } from "@/lib/party";
 
 export async function sendMessage(chatId: string, data: FormData) {
+  const socket = Party(chatId);
   try {
     const session = await getServerSession(authOptions);
     const user = session?.user;
@@ -47,11 +49,7 @@ export async function sendMessage(chatId: string, data: FormData) {
 
     const pusherBatch = []
 
-    pusherBatch.push({
-      channel: toPusherKey(`chat:${chatId}`),
-      name: "incoming_message",
-      data: messageData,
-    })
+    socket.send(JSON.stringify({ type: "add_message", message: messageData }));
 
     pusherBatch.push({
       channel:toPusherKey(`user:${friendId}:chats`),
