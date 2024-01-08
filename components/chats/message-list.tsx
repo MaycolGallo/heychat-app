@@ -46,9 +46,7 @@ const reducer = (
 
   const { type, payload } = action;
   const { timestamp } = payload;
-  const date = new Date(timestamp).toLocaleDateString();
-
-  console.log('brother im displayed in prod?',date);
+  const date = new Date(timestamp).toLocaleDateString('es-ES');
 
   if (type === "ADD_MESSAGE") {
     return {
@@ -143,6 +141,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
           dispatch({ type: "ADD_MESSAGE", payload: message.message });
           break;
         case "delete_message":
+          console.log('removed',message);
           dispatch({ type: "REMOVE_MESSAGE", payload: message.message });
           break;
         default:
