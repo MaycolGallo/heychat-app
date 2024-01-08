@@ -18,6 +18,7 @@ import Dots from "../loaders/dots";
 import { useRouter } from "next/navigation";
 import { ArchiveX } from "lucide-react";
 import { useParty } from "@/party/useParty";
+import usePartySocket from "partysocket/react";
 
 type MessageListProps = {
   initialMessages: { [key: string]: Message[] };
@@ -46,29 +47,29 @@ const reducer = (
 
   const { type, payload } = action;
   const { timestamp } = payload;
-  const date = new Date(timestamp).toLocaleDateString('es-ES');
+  const date = new Date(timestamp).toLocaleDateString("es-ES");
 
-  if (type === "ADD_MESSAGE") {
-    return {
-      ...state,
-      [date]: [...(state[date] || []), payload],
-    };
-  }
-
-  if (type === "REMOVE_MESSAGE") {
-    const updatedMessages = {
-      ...state,
-      [date]: state[date].filter((message) => message.id !== payload.id),
-    };
-
-    if (updatedMessages[date].length === 0) {
-      delete updatedMessages[date];
+  switch (type) {
+    case "ADD_MESSAGE": {
+      const newState = { ...state };
+      newState[date] = [...(newState[date] || []), payload];
+      return newState;
     }
 
-    return updatedMessages;
-  }
+    case "REMOVE_MESSAGE": {
+      const newState = { ...state };
+      newState[date] = newState[date].filter(
+        (message) => message.id !== payload.id
+      );
+      if (newState[date].length === 0) {
+        delete newState[date];
+      }
+      return newState;
+    }
 
-  return state;
+    default:
+      return state;
+  }
 };
 
 const MessageList = memo(function MessageList(props: MessageListProps) {
@@ -76,52 +77,11 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   const [messages, dispatch] = useReducer(reducer, initialMessages);
   const [isTyping, setIsTyping] = useState(false);
   const router = useRouter();
-  const { socket } = useParty(chatId);
-
-  const ref = useRef<HTMLDivElement>(null);
-  console.log('brother im displayed in prod?',messages);
-
-  useEffect(() => {
-    const handleIncomingMessage = (message: Message) => {
-      dispatch({ type: "ADD_MESSAGE", payload: message });
-    };
-
-    const handleRemovedMessage = (message: Message) => {
-      // router.refresh();
-      dispatch({ type: "REMOVE_MESSAGE", payload: message });
-    };
-
-    const handleTyping = (data: any) => {
-      const clearInterval = 900;
-      let clearTimerId;
-
-      if (data.userId !== props.sessionId) {
-        setIsTyping(true);
-
-        clearTimeout(clearTimerId);
-        clearTimerId = setTimeout(() => {
-          setIsTyping(false);
-        }, clearInterval);
-      }
-    };
-
-    // pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
-    // pusherClient.subscribe(toPusherKey(`chat:${chatId}:messages`));
-    // pusherClient.subscribe('message_typping');
-
-    // pusherClient.bind("incoming_message", handleIncomingMessage);
-    // pusherClient.bind("message_removed", handleRemovedMessage);
-
-    return () => {
-      // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
-      // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}:messages`));
-      // pusherClient.unbind("incoming_message", handleIncomingMessage);
-      // pusherClient.unbind("message_removed", handleRemovedMessage);
-    };
-  }, [chatId, props.sessionId]);
-
-  useEffect(() => {
-    const handleSocket = (event: MessageEvent) => {
+  // const { socket } = useParty(chatId);
+  usePartySocket({
+    host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+    room: chatId,
+    onMessage: (event) => {
       const message = JSON.parse(event.data);
       switch (message.type) {
         case "typing":
@@ -141,17 +101,89 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
           dispatch({ type: "ADD_MESSAGE", payload: message.message });
           break;
         case "delete_message":
-          console.log('removed',message);
+          console.log("removed", message);
           dispatch({ type: "REMOVE_MESSAGE", payload: message.message });
           break;
         default:
           break;
       }
-    };
-    socket.addEventListener("message", handleSocket);
+    },
+  });
 
-    return () => socket.removeEventListener("message", handleSocket);
-  }, [socket, props.sessionId]);
+  const ref = useRef<HTMLDivElement>(null);
+  console.log("brother im displayed in prod?", messages);
+
+  // useEffect(() => {
+  //   const handleIncomingMessage = (message: Message) => {
+  //     dispatch({ type: "ADD_MESSAGE", payload: message });
+  //   };
+
+  //   const handleRemovedMessage = (message: Message) => {
+  //     // router.refresh();
+  //     dispatch({ type: "REMOVE_MESSAGE", payload: message });
+  //   };
+
+  //   const handleTyping = (data: any) => {
+  //     const clearInterval = 900;
+  //     let clearTimerId;
+
+  //     if (data.userId !== props.sessionId) {
+  //       setIsTyping(true);
+
+  //       clearTimeout(clearTimerId);
+  //       clearTimerId = setTimeout(() => {
+  //         setIsTyping(false);
+  //       }, clearInterval);
+  //     }
+  //   };
+
+  //   // pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
+  //   // pusherClient.subscribe(toPusherKey(`chat:${chatId}:messages`));
+  //   // pusherClient.subscribe('message_typping');
+
+  //   // pusherClient.bind("incoming_message", handleIncomingMessage);
+  //   // pusherClient.bind("message_removed", handleRemovedMessage);
+
+  //   return () => {
+  //     // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
+  //     // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}:messages`));
+  //     // pusherClient.unbind("incoming_message", handleIncomingMessage);
+  //     // pusherClient.unbind("message_removed", handleRemovedMessage);
+  //   };
+  // }, [chatId, props.sessionId]);
+
+  // useEffect(() => {
+  //   const handleSocket = (event: MessageEvent) => {
+  //     const message = JSON.parse(event.data);
+  //     switch (message.type) {
+  //       case "typing":
+  //         const clearInterval = 900;
+  //         let clearTimerId;
+
+  //         if (message.userId !== props.sessionId) {
+  //           setIsTyping(true);
+
+  //           clearTimeout(clearTimerId);
+  //           clearTimerId = setTimeout(() => {
+  //             setIsTyping(false);
+  //           }, clearInterval);
+  //         }
+  //         break;
+  //       case "add_message":
+  //         dispatch({ type: "ADD_MESSAGE", payload: message.message });
+  //         break;
+  //       case "delete_message":
+  //         console.log("removed", message);
+  //         dispatch({ type: "REMOVE_MESSAGE", payload: message.message });
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   };
+  //   socket.addEventListener("message", handleSocket);
+
+  //   return () => socket.removeEventListener("message", handleSocket);
+  // }, [socket, props.sessionId]);
 
   useLayoutEffect(() => {
     if (!ref.current) return;
