@@ -48,6 +48,8 @@ const reducer = (
   const { timestamp } = payload;
   const date = new Date(timestamp).toLocaleDateString();
 
+  console.log('brother im displayed in prod?',date);
+
   if (type === "ADD_MESSAGE") {
     return {
       ...state,
@@ -79,6 +81,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   const { socket } = useParty(chatId);
 
   const ref = useRef<HTMLDivElement>(null);
+  console.log('brother im displayed in prod?',messages);
 
   useEffect(() => {
     const handleIncomingMessage = (message: Message) => {

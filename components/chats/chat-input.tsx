@@ -28,8 +28,6 @@ export const ChatInput = memo(function ChatInput({
   const handleSubmit = async (formData: FormData) => {
     await sendMessageState(formData);
     setMessage("");
-    const mess = formData.get("message")?.toString();
-    socket.send(JSON.stringify({ type: "fresh_message", newMessage: mess }));
   };
 
   function isTypping() {
