@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+import { getInitialMessages } from "@/lib/getInitialMessages";
 
 type PageProps = {
   params: {
@@ -20,32 +21,32 @@ const Messages = dynamic(() => import("@/components/chats/message-list"), {
 
 // export const dynamic = "force-dynamic";
 
-async function getInitialMessages(chatId: string) {
-  try {
-    const messages: string[] = await db.zrange(
-      `chat:${chatId}:messages`,
-      0,
-      -1
-    );
+// async function getInitialMessages(chatId: string) {
+//   try {
+//     const messages: string[] = await db.zrange(
+//       `chat:${chatId}:messages`,
+//       0,
+//       -1
+//     );
 
-    const groupedByDay = messages.reduce((previous, message, index) => {
-      const { timestamp } = message as unknown as Message;
-      const date = new Date(timestamp).toLocaleDateString();
+//     const groupedByDay = messages.reduce((previous, message, index) => {
+//       const { timestamp } = message as unknown as Message;
+//       const date = new Date(timestamp).toLocaleDateString();
 
-      if (!previous[date]) {
-        previous[date] = [];
-      }
+//       if (!previous[date]) {
+//         previous[date] = [];
+//       }
 
-      previous[date].push(message);
-      return previous;
-    }, {} as { [date: string]: string[] });
-    console.log(groupedByDay);
+//       previous[date].push(message);
+//       return previous;
+//     }, {} as { [date: string]: string[] });
+//     console.log(groupedByDay);
 
-    return groupedByDay;
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     return groupedByDay;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 async function isContactBlocked(userId: string, friendId: string) {
   const userFriends: Friend[] = await db.json.get(
@@ -95,26 +96,26 @@ export default async function Chat({ params }: PageProps) {
   });
 
   return (
-      <div className="w-full flex flex-col h-[calc(100dvh-72px)] flex-grow lg:w-[calc(100%-384px)]">
-        <HeaderChat
-          name={chatPartner?.name!}
-          image={chatPartner?.image!}
-          email={chatPartner?.email}
-          id={user?.id!}
-        />
-        {/* <Suspense fallback={<div>Loading...</div>}>
+    <div className="w-full flex flex-col h-[calc(100dvh-72px)] flex-grow lg:w-[calc(100%-384px)]">
+      <HeaderChat
+        name={chatPartner?.name!}
+        image={chatPartner?.image!}
+        email={chatPartner?.email}
+        id={user?.id!}
+      />
+      {/* <Suspense fallback={<div>Loading...</div>}>
         <MessageList
           initialMessages={initialMessages}
           chatId={chatId}
           sessionId={session?.user.id!}
         />
       </Suspense> */}
-        <Messages
-          initialMessages={initialMessages}
-          chatId={chatId}
-          sessionId={session?.user?.id!}
-        />
-        <ChatInput chatId={chatId} userId={user?.id!} isBlocked={blocked} />
-      </div>
+      <Messages
+        initialMessages={initialMessages}
+        chatId={chatId}
+        sessionId={session?.user?.id!}
+      />
+      <ChatInput chatId={chatId} userId={user?.id!} isBlocked={blocked} />
+    </div>
   );
 }

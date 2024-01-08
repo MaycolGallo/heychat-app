@@ -21,7 +21,7 @@ import { useParty } from "@/party/useParty";
 import usePartySocket from "partysocket/react";
 
 type MessageListProps = {
-  initialMessages: { [key: string]: Message[] };
+  initialMessages: Record<string, Message[]>;
   sessionId: string;
   chatId: string;
 };
