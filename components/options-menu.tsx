@@ -1,7 +1,8 @@
 "use client";
 
-import { Copy, Trash } from "lucide-react";
-import { useCallback } from "react";
+import { removeMessage } from "@/app/actions/remove";
+import { Copy, CopyCheck, Trash } from "lucide-react";
+import { useCallback, useState } from "react";
 
 type Props = {
   containerHeight?: number;
@@ -11,35 +12,37 @@ type Props = {
 
 export function OptionsMenu(props: Props) {
   const { containerHeight, chatId, message } = props;
-
-  const deleteMessage = useCallback(async () => {
-    console.log('yo lil bros im deleteing or what???',chatId, message);
-    return await fetch("/api/messages", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        chatId,
-        message,
-      }),
-    });
-  }, [chatId, message]);
+  const [isCopied, setIsCopied] = useState(false);
+  // const deleteMessage = useCallback(async () => {
+  //   console.log('yo lil bros im deleteing or what???',chatId, message);
+  //   return await fetch("/api/messages", {
+  //     method: "DELETE",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       chatId,
+  //       message,
+  //     }),
+  //   });
+  // }, [chatId, message]);
 
   const copyToClipboard = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(message.text);
+      setIsCopied(true);
     } catch (error) {
       console.error("Failed to copy to clipboard:", error);
     }
   }, [message]);
+
   return (
     <ul className="p-1 flex flex-col gap-3">
       <li className="flex px-4 py-2 items-center hover:bg-red-300 rounded text-red-500">
         <button
           type="button"
           // onClick={() => deleteMessage(chatId,message)}
-          onClick={deleteMessage}
+          onClick={async ()=> removeMessage(chatId,message)}
           className="inline-flex text-sm text-neutral-700"
         >
         <Trash className="w-4 h-4 mr-2 shrink-0 text-red-500" />
@@ -47,13 +50,13 @@ export function OptionsMenu(props: Props) {
         </button>
       </li>
       <li className="flex px-4 py-2 items-center hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded">
-        <Copy className="w-4 h-4 mr-2 shrink-0 text-neutral-500" />
+        {isCopied ? <CopyCheck className="w-4 h-4 mr-2 shrink-0 text-neutral-500" />: <Copy className="w-4 h-4 mr-2 shrink-0 text-neutral-500" />}
         <button
           type="button"
           onClick={copyToClipboard}
           className="inline-flex text-sm text-neutral-700 dark:text-neutral-300"
         >
-          Copiar
+          {isCopied ? "Copiado" : "Copiar"}
         </button>
       </li>
     </ul>
