@@ -13,7 +13,7 @@ export async function DELETE(req: Request) {
     socket.send(JSON.stringify({ type: "delete_message", message: body.message }));
     db.zrem(key, body.message)
     
-    return new Response(`Deleted 1`, { status: 200 });
+    return Response.json({socket:socket, success: true });
   } catch (error) {
     console.log(error);
     return new Response(`Error ${error}`, { status: 500 });

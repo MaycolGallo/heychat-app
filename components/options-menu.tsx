@@ -13,6 +13,7 @@ export function OptionsMenu(props: Props) {
   const { containerHeight, chatId, message } = props;
 
   const deleteMessage = useCallback(async () => {
+    console.log('yo lil bros im deleteing or what???',chatId, message);
     return await fetch("/api/messages", {
       method: "DELETE",
       headers: {
