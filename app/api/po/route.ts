@@ -22,6 +22,6 @@ export async function GET() {
 
     return Response.json({ plablos,yo:new Date().toLocaleDateString() }, { status: 200 });
   } catch (error) {
-    return Response.json({ error: error.message as Error }, { status: 500 });
+    return Response.json({ error: error as Error }, { status: 500 });
   }
 }
