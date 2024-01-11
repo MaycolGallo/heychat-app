@@ -22,6 +22,7 @@ const listLastMessages = cache(async (friends: User[], session: any) => {
       return {
         ...friend,
         lastMessage,
+        chatId: linkChatSorted(session?.user?.id!, friend.id),
       };
     })
   );

@@ -133,7 +133,11 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
         );
       }
 
-      await Promise.all([dbOperations]);
+      await Promise.all([dbOperations]).catch((error) => {
+        throw new Error("Failed to handle friend request", {
+          cause: error as Error,
+        });
+      });
 
       return {
         success: true,
@@ -142,16 +146,28 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
     }
 
     if (key === "remove") {
+      pusherServer.trigger(
+        // `user:${user}:incoming_friend_requests`,
+        toPusherKey(`user:${user}:incoming_friend_requests`),
+        "remove_friend",
+        currentUser
+      );
       const pipeline = db.pipeline();
       pipeline.srem(`user:${user}:incoming_friend_requests`, idToUserToAdd);
-      await pipeline.exec();
+      const [result] = await pipeline.exec()
+
+      if (!result) {
+        throw new Error("Ocurrió un error en la solicitud de amistad");
+      }
+
       return {
         success: true,
         message: "Friend request removed",
       };
     }
+    
   } catch (error) {
-    console.log(error);
-    return { error: error as Error };
+    console.log('meow',error);
+    return { message: `${error}`, type: "error" };
   }
 }

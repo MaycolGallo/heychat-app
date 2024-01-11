@@ -59,7 +59,6 @@ export function BlockUser(props: Props) {
   //     setOpen(false);
   //   }
   // }, [contactId, sessionId]);
-  console.log(data)
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>

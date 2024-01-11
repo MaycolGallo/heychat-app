@@ -1,5 +1,5 @@
 "use client";
-import { Bell, UserPlus2,Contact2 } from "lucide-react";
+import { Bell, UserPlus2, Contact2 } from "lucide-react";
 
 import {
   Tooltip,
@@ -39,7 +39,7 @@ const options = [
     link: "/chats/solicitudes",
     icon: <UserPlus2 className="h-5 w-5" />,
   },
-  
+
   // {
   //   label: "Notificaciones",
   //   link: "/notificaciones",
@@ -66,7 +66,7 @@ export function ListOptionsHeader({
     );
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`));
 
-    const addedFriendHandler = () => {
+    const processedFriendHandler = () => {
       setUnseen((prev) => prev - 1);
     };
     const newFriendRequestHandler = () => {
@@ -74,14 +74,17 @@ export function ListOptionsHeader({
     };
 
     pusherClient.bind("new_incoming_friend", newFriendRequestHandler);
-    pusherClient.bind("new_friend", addedFriendHandler);
+    pusherClient.bind("new_friend", processedFriendHandler);
+    pusherClient.bind("remove_friend", processedFriendHandler);
+
     return () => {
       pusherClient.unsubscribe(
         toPusherKey(`user:${sessionId}:incoming_friend_requests`)
       );
       pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`));
-      pusherClient.unbind("new_friend", addedFriendHandler);
+      pusherClient.unbind("new_friend", processedFriendHandler);
       pusherClient.unbind("new_incoming_friend", newFriendRequestHandler);
+      pusherClient.unbind("remove_friend", processedFriendHandler);
     };
   }, [sessionId]);
 
@@ -93,13 +96,14 @@ export function ListOptionsHeader({
             <Link
               className={cn(
                 "rounded-full dark:bg-neutral-700 dark:text-nueutral-100 hover:ring-2 ring-offset-2 dark:ring-offset-neutral-800 focus:ring-blue-500 hover:ring-blue-500 relative bg-neutral-300 p-3",
-                pathname === option.link && "dark:bg-blue-300 dark:text-blue-950 text-blue-950 bg-blue-300"
+                pathname === option.link &&
+                  "dark:bg-blue-300 dark:text-blue-950 text-blue-950 bg-blue-300"
               )}
               href={option.link}
             >
               {option.icon}
               {unseen > 0 && option.label === "Solicitudes mensajes" && (
-                <span className="absolute left-7 text-sm bottom-7 h-4 flex items-center justify-center text-white p-3 w-4 rounded-full bg-blue-500">
+                <span className="absolute left-7 text-sm bottom-7 h-4 flex items-center justify-center text-white p-3 w-4 rounded-full bg-red-500">
                   {unseen}
                 </span>
               )}
