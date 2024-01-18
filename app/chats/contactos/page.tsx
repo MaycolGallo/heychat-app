@@ -7,6 +7,9 @@ import { ListContacts } from "./components/list-contacts";
 import { Suspense } from "react";
 import { ListBlocked } from "./components/list-block";
 import { cache } from "react";
+import { getDistinctCategories } from "@/lib/getFilters";
+import { Filters } from "./components/filters";
+import { unstable_noStore } from "next/cache";
 
 const getContacts = cache(async (friends: User[], session: any) => {
   const contacts = await Promise.all(
@@ -22,13 +25,15 @@ const getContacts = cache(async (friends: User[], session: any) => {
         ...friend,
         blocked: matchingContact?.blocked,
         added: matchingContact?.added,
+        category: matchingContact?.category,
       };
     })
   );
   return contacts;
-})
+});
 
 export default async function Page() {
+  unstable_noStore();
   const session = await getServerSession(authOptions);
 
   const [numContacts, friends] = await Promise.all([
@@ -37,6 +42,7 @@ export default async function Page() {
   ]);
 
   const contacts = await getContacts(friends, session);
+  // const filters = 
 
   return (
     <div className="p-6 w-full lg:w-[calc(100%-384px)] bg-sky-50 dark:bg-zinc-900">
@@ -47,12 +53,16 @@ export default async function Page() {
         <p>Tienes {numContacts} contacto(s)</p>
       </div>
       <Tabs defaultValue="account" className="w-full my-4">
-        <TabsList>
-          <TabsTrigger value="account">Todos</TabsTrigger>
-          <TabsTrigger value="password">Bloqueados</TabsTrigger>
-        </TabsList>
-        <TabsContent value="account">
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="account">Todos</TabsTrigger>
+            <TabsTrigger value="password">Bloqueados</TabsTrigger>
+          </TabsList>
+          {/* <Filters filters={filters} /> */}
+        </div>
+        <TabsContent className="relative" value="account">
           <ListContacts
+            // @ts-ignore
             initialContacts={contacts}
             sessionId={session?.user.id}
           />

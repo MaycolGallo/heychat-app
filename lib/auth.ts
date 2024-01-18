@@ -2,6 +2,12 @@ import { UpstashRedisAdapter } from "@auth/upstash-redis-adapter";
 import { db } from "./db";
 import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthOptions } from "next-auth";
+import { cache } from "react";
+
+const getUser = cache(async (id: string) => {
+  const user = (await db.get(`user:${id}`)) as User | null;
+  return user;
+})
 
 export const authOptions = {
   adapter: UpstashRedisAdapter(db),
@@ -24,7 +30,7 @@ export const authOptions = {
      * the user ID and returned.
      */
     async jwt(params) {
-      const dbUser = (await db.get(`user:${params.token.id}`)) as User | null;
+      const dbUser = await getUser(params.token.id);
 
       if (!dbUser) {
         params.token.id = params.user.id;

@@ -40,7 +40,7 @@ export const FriendList = memo(function FriendList({
     [activeFriends]
   );
 
-  console.log("last messages", lastMessages);
+  // console.log("last messages", lastMessages);
 
   usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
@@ -48,28 +48,10 @@ export const FriendList = memo(function FriendList({
     onMessage(event) {
       const message = JSON.parse(event.data);
       console.log("yeah the sky is full of love", message);
-      console.log("is bith nige", sessionId);
-      if (message.type === "new_message") {
-        setLastMessages((prev) =>
-          prev.map((mess) => {
-            if (
-              mess.lastMessage &&
-              mess.lastMessage.senderId === message.message.senderId &&
-              mess.chatId === message.chatId
-            ) {
-              return {
-                ...mess,
-                lastMessage: message.message,
-              };
-            }
-            return mess;
-          })
-        );
-      } else if (
-        message.type === "new_message" &&
-        message.userId !== sessionId
-      ) {
-        setUnseenMessages((prev) => [...prev, message.message]);
+      console.log('todays message', message.type === "new_message" && message.userId !== sessionId);
+      if (message.type === "new_message" && message.userId !== sessionId) {
+        setUnseenMessages((prev) => [...prev, message]);
+        
       }
     },
   });
@@ -124,12 +106,11 @@ export const FriendList = memo(function FriendList({
     <>
       {uniqueFriends.length ? (
         <ul className=" flex flex-col gap-4 p-4">
-          
           {uniqueFriends.sort().map((friend) => {
             const unseenCount = unseenMessages.filter(
               (msg) => msg.senderId === friend.id
             ).length;
-
+              
             return (
               <FriendItem
                 friend={friend}

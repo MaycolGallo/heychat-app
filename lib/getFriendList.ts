@@ -1,6 +1,7 @@
+import { cache } from "react";
 import { db } from "./db";
 
-export async function getFriendList(userID: string) {
+export const getFriendList = cache(async (userID: string) => {
   const friends = await db.smembers(`user:${userID}:friends`);
 
   const listFriends = await Promise.all(
@@ -10,4 +11,4 @@ export async function getFriendList(userID: string) {
     })
   );
   return listFriends;
-}
+});

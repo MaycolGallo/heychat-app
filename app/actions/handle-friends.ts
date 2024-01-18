@@ -12,6 +12,7 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
       blocked: false,
       added: Date.now(),
       id: idFriend,
+      category: 'General'
     };
     return body;
   }

@@ -9,6 +9,7 @@ import { signOut } from "next-auth/react";
 import { LogOutIcon, SunIcon, MoonIcon } from "lucide-react";
 import { db } from "@/lib/db";
 import { useTheme } from "next-themes";
+import usePartySocket from "partysocket/react";
 
 type Props = {
   imgUrl: string;
@@ -20,7 +21,6 @@ type Props = {
 export function DropdownOptions(props: Props) {
   const { imgUrl, userId, email, name } = props;
   const { theme, setTheme } = useTheme();
-  
 
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {
@@ -28,10 +28,16 @@ export function DropdownOptions(props: Props) {
       return storedLocation ? JSON.parse(storedLocation) : false;
     }
   });
+
   const [coord, setCoord] = useState<GeoInfo>({
     countryName: "",
     countryCode: "",
     city: "",
+  });
+
+  const socket = usePartySocket({
+    host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+    room: "user-location",
   });
 
   useEffect(() => {
@@ -50,24 +56,38 @@ export function DropdownOptions(props: Props) {
           setCoord(data);
 
           // await db.json.geoadd("user-locations", { latitude, longitude, member: `${userId}:current_location` });
-
-          await fetch("/api/update-location", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              locationActive,
+          socket.send(
+            JSON.stringify({
+              type: "location",
               userId,
+              locationActive,
               cityName: data.city,
               countryName: data.countryName,
               countryCode: data.countryCode,
-            }),
-          });
+            })
+          );
+
+          // await fetch("/api/update-location", {
+          //   method: "POST",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //   },
+          //   body: JSON.stringify({
+          //     locationActive,
+          //     userId,
+          //     cityName: data.city,
+          //     countryName: data.countryName,
+          //     countryCode: data.countryCode,
+          //   }),
+          // });
           console.log(data);
         },
         (error) => {
-          console.log(error);
+          setCoord({
+            countryName: "",
+            countryCode: "",
+            city: "",
+          });
         }
       );
     } else {
@@ -86,7 +106,7 @@ export function DropdownOptions(props: Props) {
         city: "",
       });
     }
-  }, [locationActive, userId]);
+  }, [locationActive, userId, socket]);
 
   return (
     <Popover>

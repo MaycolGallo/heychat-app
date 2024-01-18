@@ -36,9 +36,12 @@ export function UserStatus({ userId }: { userId: string }) {
     },
     onMessage(event) {
       const status = JSON.parse(event.data) as any;
-      const newUser = status.connecteds.find(
+      const newUser = status.connecteds?.find(
         ({ status }: { status: Test["status"] }) => status.userId !== userId
       );
+      console.log("newUser", newUser);
+      console.log("interesting", status?.connecteds);
+
       if (status.type !== "leave") {
         setStatusUser(newUser);
       }

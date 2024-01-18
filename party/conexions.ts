@@ -14,7 +14,15 @@ type Test = {
 export default class ConnServer implements Party.Server {
   constructor(readonly party: Party.Party) {}
 
+  onConnect(
+    connection: Party.Connection<unknown>,
+    ctx: Party.ConnectionContext
+  ): void | Promise<void> {
+    // connection.send(JSON.stringify({ connecteds: this.user_status }));
+  }
+
   user_status = Array<Test>();
+  junk = 0
   async onMessage(
     message: string | ArrayBuffer | ArrayBufferView,
     sender: Party.Connection<unknown>
@@ -26,6 +34,9 @@ export default class ConnServer implements Party.Server {
     this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
 
     this.party.storage.put("connecteds", this.user_status);
+    this.party.storage.put("junk", 25);
+
+    this.party.broadcast(JSON.stringify({ junk: this.junk }), []);
 
     const storage = await this.party.storage.get("connecteds");
     console.log("storage", storage);
@@ -36,6 +47,7 @@ export default class ConnServer implements Party.Server {
     if (!this.user_status) {
       this.user_status = (await this.party.storage.get("connecteds")) as Test[];
     }
+    this.junk = (await this.party.storage.get("junk")) as number;
   }
 
   addObjectToStorage(arr: Test[], newItem: Test) {
@@ -64,13 +76,13 @@ export default class ConnServer implements Party.Server {
         isConnected: false,
         connectedAt: Date.now(),
         disconnectedAt: Date.now(),
-      }
-    }
+      },
+    };
 
-    this.addObjectToStorage(this.user_status, status)
+    this.addObjectToStorage(this.user_status, status);
 
     this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
-    
+
     // // await this.party.storage.put("user_status", this.user_status);
     // // const user_status = await this.party.storage.get("user_status");
     // const el = this.user_status.map((status) => {

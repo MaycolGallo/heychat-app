@@ -1,10 +1,13 @@
+"use client";
+
 import Image from "next/image";
-import { Suspense, useOptimistic } from "react";
+import { Suspense, useEffect, useMemo, useOptimistic, useState } from "react";
 import { BlockUser } from "./block-user";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { formatTimePassed } from "@/lib/interval-time";
 import { EmptyList } from "./empty-list";
+import { Filters } from "./filters";
+import { getDistinctCategories } from "@/lib/getFilters";
+import { FancyBox } from "@/components/ui/change-cat";
+import { unstable_cache } from "next/cache";
 
 type Props = {
   initialContacts: Array<{
@@ -14,21 +17,43 @@ type Props = {
     name: string;
     email: string;
     image: string;
+    category: string;
   }>;
   sessionId?: string;
 };
 
-export function ListContacts({ initialContacts,sessionId }: Props) {
+export function ListContacts({ initialContacts, sessionId }: Props) {
   // const [contact, setContact] = useOptimistic(initialContacts);
   const numNotBlocked = initialContacts.filter(
     (contact) => !contact.blocked
-  ).length
+  ).length;
+
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+
+  const filterContacts = useMemo(() => {
+    if (selectedFilter) {
+      return initialContacts.filter((contact) =>
+        contact.category.includes(selectedFilter)
+      );
+    }
+    return initialContacts;
+  }, [initialContacts, selectedFilter]);
+
+
+  const contect = getDistinctCategories(initialContacts) as string[];
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <>
+      <Filters
+        filters={contect}
+        selectedFilter={selectedFilter}
+        setSelectedFilter={setSelectedFilter}
+      />
       {numNotBlocked > 0 ? (
         <div className="request-container">
+          {selectedFilter ? <span>{selectedFilter}</span> : null}
           <section className="grid grid-cols-1 requests gap-4 my-3">
-            {initialContacts
+            {filterContacts
               .filter((contact) => !contact.blocked)
               .map((contact, index) => (
                 <article
@@ -52,6 +77,11 @@ export function ListContacts({ initialContacts,sessionId }: Props) {
                       </h3>
                       <p className="dark:text-neutral-400">{contact.email}</p>
                     </div>
+                    <FancyBox
+                      categories={contect}
+                      contactId={contact.id}
+                      category={contact.category}
+                    />
                     <BlockUser
                       type="block"
                       contactId={contact.id}
@@ -66,6 +96,6 @@ export function ListContacts({ initialContacts,sessionId }: Props) {
       ) : (
         <EmptyList />
       )}
-    </Suspense>
+    </>
   );
 }

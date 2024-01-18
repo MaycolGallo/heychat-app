@@ -37,8 +37,8 @@ export async function HeaderChat(props: FriendInfo) {
           </Suspense>
           {/* <Suspense fallback={<Skeleton className="h-4 w-24" />}>
             <ChatLocation userId={props.id}/>
-          </Suspense> */}
-
+            </Suspense> */}
+          {/* <ChatLocation userId={props.id} /> */}
         </div>
       </div>
     </section>

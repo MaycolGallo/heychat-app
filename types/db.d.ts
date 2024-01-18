@@ -36,4 +36,5 @@ type Friend = {
   id: string;
   blocked: boolean;
   added: number;
+  category?: string;
 };
