@@ -36,15 +36,20 @@ export function UserStatus({ userId }: { userId: string }) {
     },
     onMessage(event) {
       const status = JSON.parse(event.data) as any;
-      const newUser = status.connecteds?.find(
-        ({ status }: { status: Test["status"] }) => status.userId !== userId
-      );
+      let newUser;
+      if (status.connecteds) {
+         newUser = status.connecteds.find(
+          ({ status }: { status: Test["status"] }) => status.userId !== userId
+        );
+      }
+      console.log('hello  mylil bros', status)
       console.log("newUser", newUser);
       console.log("interesting", status?.connecteds);
 
-      if (status.type !== "leave") {
+      if (status.type !== "leave" && status.connecteds) {
         setStatusUser(newUser);
       }
+      
       // switch (status.type) {
       //   case "join":
       //     console.log("join", status);
@@ -64,7 +69,7 @@ export function UserStatus({ userId }: { userId: string }) {
   //   }
   return (
     <div>
-      {/* {JSON.stringify(statusUser)} */}
+     {/* <span>Yo lil bros: {JSON.stringify(statusUser)}</span> */}
       {statusUser?.type === "join" && statusUser?.status.isConnected ? (
         <span className="h-3 w-3 absolute border border-neutral-200 rounded-full -translate-x-6 -translate-y-1 bg-lime-500"></span>
       ) : (

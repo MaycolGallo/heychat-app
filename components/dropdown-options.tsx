@@ -22,6 +22,7 @@ export function DropdownOptions(props: Props) {
   const { imgUrl, userId, email, name } = props;
   const { theme, setTheme } = useTheme();
 
+  const [loterror, setError] = useState<GeolocationPositionError | null>(null);
   const [locationActive, setLocationActive] = useState(() => {
     if (typeof window !== "undefined") {
       const storedLocation = window.localStorage.getItem("locationActive");
@@ -32,6 +33,7 @@ export function DropdownOptions(props: Props) {
   const [coord, setCoord] = useState<GeoInfo>({
     countryName: "",
     countryCode: "",
+    locality: "",
     city: "",
   });
 
@@ -61,7 +63,8 @@ export function DropdownOptions(props: Props) {
               type: "location",
               userId,
               locationActive,
-              cityName: data.city,
+              city: data.city,
+              locality: data.locality,
               countryName: data.countryName,
               countryCode: data.countryCode,
             })
@@ -83,26 +86,23 @@ export function DropdownOptions(props: Props) {
           console.log(data);
         },
         (error) => {
+          setError(error);
+          setLocationActive(false);
+          console.log(error);
           setCoord({
             countryName: "",
             countryCode: "",
             city: "",
+            locality: "",
           });
         }
       );
     } else {
-      fetch("/api/update-location", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          locationActive: locationActive,
-        }),
-      });
+      socket.send(JSON.stringify({ type: "location", userId, locationActive }));
       setCoord({
         countryName: "",
         countryCode: "",
+        locality: "",
         city: "",
       });
     }
@@ -132,7 +132,7 @@ export function DropdownOptions(props: Props) {
           <h1 className="font-bold">{name}</h1>
           <p className="text-truncate">{email}</p>
           <Suspense fallback={<div>Loading...</div>}>
-            <UserCoordsInfo coord={coord} />
+            <UserCoordsInfo coord={coord} error={loterror}/>
           </Suspense>
         </div>
         <ul className="flex m-2 flex-col">
