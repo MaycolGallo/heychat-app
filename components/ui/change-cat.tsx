@@ -45,7 +45,13 @@ import { useActionState } from "@/lib/use-form-state";
 import { change } from "@/app/actions/change";
 import { ToastError, ToastSuccess } from "../toasts/toasts";
 import { useMediaQuery } from "@/lib/useMediaQuery";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "./drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./drawer";
 
 // FIXME: https://twitter.com/lemcii/status/1659649371162419202?s=46&t=gqNnMIjMWXiG2Rbrr5gT6g
 // Removing states would help maybe?
@@ -172,7 +178,9 @@ export function FancyBox({
                       )}
                     /> */}
                     <div className="flex-1">{framework}</div>
-                    {selectedValues === framework && <Check className="mr-2 h-4 w-4" />}
+                    {selectedValues === framework && (
+                      <Check className="mr-2 h-4 w-4" />
+                    )}
 
                     {/* <div
                       className="h-4 w-4 rounded-full"
@@ -228,7 +236,7 @@ export function FancyBox({
               value={inputValue}
               onValueChange={setInputValue}
             />
-            <CommandGroup  className="max-h-[145px] py-1 overflow-auto">
+            <CommandGroup className="max-h-[145px] py-1 overflow-auto">
               {frameworks.map((framework) => {
                 // const isActive = selectedValues.includes(framework);
                 return (
@@ -247,7 +255,9 @@ export function FancyBox({
                       )}
                     /> */}
                     <div className="flex-1">{framework}</div>
-                    {selectedValues === framework && <Check className="mr-2 h-4 w-4" />}
+                    {selectedValues === framework && (
+                      <Check className="mr-2 h-4 w-4" />
+                    )}
                     {/* <div
                       className="h-4 w-4 rounded-full"
                       style={{ backgroundColor: framework.color }}
@@ -300,13 +310,10 @@ function SaveButton({
   const render = inputValue !== "" && selected !== inputValue;
 
   return (
-    // <Button disabled={!render} type="submit" className="w-full">
-    //   Save
-    // </Button>
     <CommandItem
       value={`:${uniqueValue}:`}
       className={`w-full justify-center ${
-        !render ? "cursor-not-allowed" : "cursor-pointer"
+        !render ? "cursor-not-allowed text-neutral-600" : "cursor-pointer text-neutral-200s"
       }`}
       disabled={!render}
       onSelect={onSelect}

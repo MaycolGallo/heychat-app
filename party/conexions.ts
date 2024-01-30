@@ -14,15 +14,16 @@ type Test = {
 export default class ConnServer implements Party.Server {
   constructor(readonly party: Party.Party) {}
 
-  onConnect(
+  async onConnect(
     connection: Party.Connection<unknown>,
     ctx: Party.ConnectionContext
-  ): void | Promise<void> {
-    // connection.send(JSON.stringify({ connecteds: this.user_status }));
+  ) {
+    // connection.send(JSON.stringify({ chatters: this.user_status }));
+    await this.party.storage.deleteAll();
   }
 
   user_status = Array<Test>();
-  junk = 0
+  junk = 0;
   async onMessage(
     message: string | ArrayBuffer | ArrayBufferView,
     sender: Party.Connection<unknown>
@@ -31,15 +32,17 @@ export default class ConnServer implements Party.Server {
 
     // this.user_status.push(JSON.parse(message as string));
     this.addObjectToStorage(this.user_status, JSON.parse(message as string));
-    this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
+    // this.party.broadcast(JSON.stringify(message), []);
+    // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
 
-    this.party.storage.put("connecteds", this.user_status);
-    this.party.storage.put("junk", 25);
+    await this.party.storage.put("connecteds", this.user_status);
+    // this.party.storage.put("junk", 25);
 
-    this.party.broadcast(JSON.stringify({ junk: this.junk }), []);
+    // this.party.broadcast(JSON.stringify({ junk: this.junk }), []);
 
     const storage = await this.party.storage.get("connecteds");
-    console.log("storage", storage);
+    this.party.broadcast(JSON.stringify({ connecteds: storage }), []);
+    // console.log("storage", storage);
     // this.party.broadcast(JSON.stringify({ connecteds:this.user_status }), []);
   }
 
@@ -80,31 +83,11 @@ export default class ConnServer implements Party.Server {
     };
 
     this.addObjectToStorage(this.user_status, status);
+    // this.party.storage.put("connecteds", this.user_status);
 
+    // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
     this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
 
-    // // await this.party.storage.put("user_status", this.user_status);
-    // // const user_status = await this.party.storage.get("user_status");
-    // const el = this.user_status.map((status) => {
-    //     if (status.id === conn.id) {
-    //         return{
-    //             ...status,
-    //             isConnected:false,
-    //             disconnectedAt:Date.now()
-    //         }
-    //     }
-    //     return status
-    // })
-
-    // this.party.broadcast(JSON.stringify({ type: "leave", connecteds: el }));
-
-    // await this.party.storage.put("list_users", el);
-
-    // for (const con of this.party.getConnections()) {
-    //   if (con.id !== conn.id) {
-    //     conn.send(JSON.stringify({ type: "leave", yo: user_status }));
-    //   }
-    // }
   }
 }
 ConnServer satisfies Party.Worker;

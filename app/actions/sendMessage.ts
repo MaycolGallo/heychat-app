@@ -10,7 +10,7 @@ import { Party } from "@/lib/party";
 
 export async function sendMessage(chatId: string, data: FormData) {
   const socket = Party(chatId);
-  const socket2 = Party('friends');
+  // const socket2 = Party('friends');
   try {
     const session = await getServerSession(authOptions);
     const user = session?.user;
@@ -18,6 +18,8 @@ export async function sendMessage(chatId: string, data: FormData) {
     const [userId1, userId2] = chatId.split("--");
 
     const friendId = user?.id === userId1 ? userId2 : userId1;
+
+    const socket2 = Party(friendId);
 
     const startTime = performance.now();
 

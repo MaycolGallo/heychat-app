@@ -78,6 +78,7 @@ export function MessageBox(props: MessageItem) {
         className={`text-xs ${
           isCurrentUser ? "self-end" : "self-start"
         } py-1.5`}
+        suppressHydrationWarning
       >
         {getTimeForTimestamp(message.timestamp)}
       </span>

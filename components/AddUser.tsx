@@ -145,6 +145,7 @@ function FormToSubmit({
               },
             })}
             // onBlur={() => setInputValue("")}
+            autoComplete="off"
             name="email"
           />
           {errors.root?.serverError.type === "error" && (

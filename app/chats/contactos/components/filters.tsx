@@ -117,36 +117,3 @@ function FilterList({
     </Command>
   );
 }
-
-type FunctionAsChildProps = {
-  children?: (count: number, increment: () => void) => React.ReactNode;
-};
-
-const FunctionAsChild: React.FC<FunctionAsChildProps> = ({ children }) => {
-  const [count, setCount] = useState<number>(0);
-
-  const increment = (): void => {
-    setCount(count + 1);
-  };
-
-  if (children) {
-    children(count, increment);
-  }
-
-  return <div>meow</div>;
-};
-
-const App = () => {
-  return (
-    <FunctionAsChild>
-      {(count, increment) => (
-        <div>
-          {/* Display the current count */}
-          <p>Count: {count}</p>
-          {/* Add a button to increment the count */}
-          <button onClick={increment}>Increment</button>
-        </div>
-      )}
-    </FunctionAsChild>
-  );
-};

@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { getInitialMessages } from "@/lib/getInitialMessages";
+import { unstable_noStore } from "next/cache";
 
 type PageProps = {
   params: {
@@ -74,6 +75,7 @@ async function isContactBlocked(userId: string, friendId: string) {
 }
 
 export default async function Chat({ params }: PageProps) {
+  unstable_noStore()
   const { chatId } = params;
   const session = await getServerSession(authOptions);
 

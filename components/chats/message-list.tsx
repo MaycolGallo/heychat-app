@@ -1,8 +1,5 @@
 "use client";
 
-import { getTimeForTimestamp } from "@/lib/getTimeChat";
-import { pusherClient } from "@/lib/pusher";
-import { toPusherKey } from "@/lib/utils";
 import {
   useState,
   useEffect,
@@ -11,8 +8,7 @@ import {
   useLayoutEffect,
   useReducer,
 } from "react";
-import { MessageBox } from "./mestr";
-import { flushSync } from "react-dom";
+import { MessageBox } from "./message-box";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
 import Dots from "../loaders/dots";
 import { useRouter } from "next/navigation";
@@ -111,79 +107,6 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
   });
 
   const ref = useRef<HTMLDivElement>(null);
-  console.log("brother im displayed in prod?", messages);
-
-  // useEffect(() => {
-  //   const handleIncomingMessage = (message: Message) => {
-  //     dispatch({ type: "ADD_MESSAGE", payload: message });
-  //   };
-
-  //   const handleRemovedMessage = (message: Message) => {
-  //     // router.refresh();
-  //     dispatch({ type: "REMOVE_MESSAGE", payload: message });
-  //   };
-
-  //   const handleTyping = (data: any) => {
-  //     const clearInterval = 900;
-  //     let clearTimerId;
-
-  //     if (data.userId !== props.sessionId) {
-  //       setIsTyping(true);
-
-  //       clearTimeout(clearTimerId);
-  //       clearTimerId = setTimeout(() => {
-  //         setIsTyping(false);
-  //       }, clearInterval);
-  //     }
-  //   };
-
-  //   // pusherClient.subscribe(toPusherKey(`chat:${chatId}`));
-  //   // pusherClient.subscribe(toPusherKey(`chat:${chatId}:messages`));
-  //   // pusherClient.subscribe('message_typping');
-
-  //   // pusherClient.bind("incoming_message", handleIncomingMessage);
-  //   // pusherClient.bind("message_removed", handleRemovedMessage);
-
-  //   return () => {
-  //     // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`));
-  //     // pusherClient.unsubscribe(toPusherKey(`chat:${chatId}:messages`));
-  //     // pusherClient.unbind("incoming_message", handleIncomingMessage);
-  //     // pusherClient.unbind("message_removed", handleRemovedMessage);
-  //   };
-  // }, [chatId, props.sessionId]);
-
-  // useEffect(() => {
-  //   const handleSocket = (event: MessageEvent) => {
-  //     const message = JSON.parse(event.data);
-  //     switch (message.type) {
-  //       case "typing":
-  //         const clearInterval = 900;
-  //         let clearTimerId;
-
-  //         if (message.userId !== props.sessionId) {
-  //           setIsTyping(true);
-
-  //           clearTimeout(clearTimerId);
-  //           clearTimerId = setTimeout(() => {
-  //             setIsTyping(false);
-  //           }, clearInterval);
-  //         }
-  //         break;
-  //       case "add_message":
-  //         dispatch({ type: "ADD_MESSAGE", payload: message.message });
-  //         break;
-  //       case "delete_message":
-  //         console.log("removed", message);
-  //         dispatch({ type: "REMOVE_MESSAGE", payload: message.message });
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   };
-  //   socket.addEventListener("message", handleSocket);
-
-  //   return () => socket.removeEventListener("message", handleSocket);
-  // }, [socket, props.sessionId]);
 
   useLayoutEffect(() => {
     if (!ref.current) return;

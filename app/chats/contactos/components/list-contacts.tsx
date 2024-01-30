@@ -41,7 +41,6 @@ export function ListContacts({ initialContacts, sessionId }: Props) {
 
 
   const contect = getDistinctCategories(initialContacts) as string[];
-
   return (
     <>
       <Filters
@@ -51,7 +50,7 @@ export function ListContacts({ initialContacts, sessionId }: Props) {
       />
       {numNotBlocked > 0 ? (
         <div className="request-container">
-          {selectedFilter ? <span>{selectedFilter}</span> : null}
+          {selectedFilter ? <span className="text-xl font-semibold">{selectedFilter}</span> : null}
           <section className="grid grid-cols-1 requests gap-4 my-3">
             {filterContacts
               .filter((contact) => !contact.blocked)

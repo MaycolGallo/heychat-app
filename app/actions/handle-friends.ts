@@ -45,9 +45,28 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
     }
 
     const [length, length2] = await Promise.all([
-      db.json.get(`user:${user}:friends_info`, "$.friends"),
-      db.json.get(`user:${idToUserToAdd}:friends_info`, "$.friends"),
+      db.json.get(`user:${user}:friends_info`, "$.friends.[*]"),
+      db.json.get(`user:${idToUserToAdd}:friends_info`, "$.friends.[*]"),
     ]);
+
+    const userIndex = length.findIndex((friend :any) => {
+      return friend.id === idToUserToAdd;
+    }) as number;
+
+    const contactIndex = length2.findIndex((friend:any) => {
+      return friend.id === session?.user?.id;
+    }) as number;
+
+    const [isInList,isInFriendList] = await Promise.all([
+      db.json.get(`user:${user}:friends_info`, `$.friends.[${userIndex}]`),
+      db.json.get(`user:${idToUserToAdd}:friends_info`, `$.friends.[${contactIndex}]`),
+    ])
+
+    console.log("isInList", isInList);
+    console.log("length1", length);
+    console.log("length2", length2);
+    console.log("indexes", {userIndex, contactIndex});
+
 
     if (key === "add") {
       const addFriendInfoToUser = addFriendInfo(idToUserToAdd);

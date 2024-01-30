@@ -3,7 +3,7 @@
 import { getFriendList } from "@/lib/getFriendList";
 import { Await } from "../buildui/await";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { linkChatSorted, toPusherKey } from "@/lib/utils";
 import React, { useEffect, Suspense, useState, memo, useMemo } from "react";
 import { pusherClient } from "@/lib/pusher";
@@ -15,6 +15,7 @@ import { AddUser } from "../AddUser";
 import { FriendItem } from "./friend-item";
 import usePartySocket from "partysocket/react";
 import { CheckCircle2 } from "lucide-react";
+import PartySocket from "partysocket";
 
 export const FriendList = memo(function FriendList({
   sessionId,
@@ -27,6 +28,7 @@ export const FriendList = memo(function FriendList({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const query = useParams()
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const [activeFriends, setActiveFriends] = useState<User[]>(friends);
   const [lastMessages, setLastMessages] = useState<any[]>(
@@ -40,21 +42,42 @@ export const FriendList = memo(function FriendList({
     [activeFriends]
   );
 
-  // console.log("last messages", lastMessages);
+  //  const socket = useMemo(() => {
+  //   if (query.chatId) {
+  //     return new PartySocket({
+  //       host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+  //       room: query.chatId as string,
+  //     });
+  //   }
+  //   return null
+  // }, [query.chatId])
+
+
+  // useEffect(() => {
+  //   const handleSocket = (event: MessageEvent) => {
+  //     const message = JSON.parse(event.data);
+  //     console.log("yeah the sky is full of love", message);
+  //     if (message.type === "new_message" && message.userId !== sessionId) {
+  //       setUnseenMessages((prev) => [...prev, message]);
+  //     }
+  //   }
+  //   socket?.addEventListener('message', handleSocket)
+  //   return () => socket?.removeEventListener('message', handleSocket)
+  // },[socket, sessionId]);
+
+  // console.log("last messages", unseenMessages);
 
   usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
-    room: "friends",
-    onMessage(event) {
+    room: sessionId,
+    onMessage: (event) => {
       const message = JSON.parse(event.data);
       console.log("yeah the sky is full of love", message);
-      console.log('todays message', message.type === "new_message" && message.userId !== sessionId);
       if (message.type === "new_message" && message.userId !== sessionId) {
-        setUnseenMessages((prev) => [...prev, message]);
-        
+        setUnseenMessages((prev) => [...prev, message.message]);
       }
     },
-  });
+  })
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`));

@@ -19,6 +19,7 @@ type Test = {
 export function UserStatus({ userId }: { userId: string }) {
   const chatId = useParams().chatId;
   const [statusUser, setStatusUser] = useState<Test>();
+  const [statusUsers, setStatusUsers] = useState<Test[]>([]);
 
   const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
@@ -36,31 +37,58 @@ export function UserStatus({ userId }: { userId: string }) {
     },
     onMessage(event) {
       const status = JSON.parse(event.data) as any;
+      console.log("hello  mylil bros", status);
       let newUser;
       if (status.connecteds) {
-         newUser = status.connecteds.find(
+        newUser = status.connecteds.find(
           ({ status }: { status: Test["status"] }) => status.userId !== userId
-        );
-      }
-      console.log('hello  mylil bros', status)
-      console.log("newUser", newUser);
-      console.log("interesting", status?.connecteds);
-
-      if (status.type !== "leave" && status.connecteds) {
+        )
         setStatusUser(newUser);
       }
-      
-      // switch (status.type) {
-      //   case "join":
-      //     console.log("join", status);
-      //     setKaukas(status);
-      //     break
-      //   case "leave":
-      //     console.log("leave", status);
-      //     break
-      // }
     },
   });
+
+  // const socket = usePartySocket({
+  //   host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
+  //   room: chatId.toString(),
+  //   party: "conexions",
+  //   onOpen: () => {
+  //     const status = {
+  //       userId,
+  //       id: socket.id,
+  //       isConnected: true,
+  //       disconnectedAt: null,
+  //       connectedAt: Date.now(),
+  //     };
+  //     socket.send(JSON.stringify({ type: "join", status }));
+  //   },
+  //   onMessage(event) {
+  //     const status = JSON.parse(event.data) as any;
+  //     let newUser;
+  //     if (status.connecteds) {
+  //        newUser = status.connecteds.find(
+  //         ({ status }: { status: Test["status"] }) => status.userId !== userId
+  //       );
+  //     }
+  //     console.log('hello  mylil bros', status)
+  //     console.log("newUser", newUser);
+  //     console.log("interesting", status?.connecteds);
+
+  //     if (status.type !== "leave" && status.connecteds) {
+  //       setStatusUser(newUser);
+  //     }
+      
+  //     // switch (status.type) {
+  //     //   case "join":
+  //     //     console.log("join", status);
+  //     //     setKaukas(status);
+  //     //     break
+  //     //   case "leave":
+  //     //     console.log("leave", status);
+  //     //     break
+  //     // }
+  //   },
+  // });
 
   const checkStatus = statusUser?.type === "join" && statusUser?.status.userId
   //   if (!statusUser) {
