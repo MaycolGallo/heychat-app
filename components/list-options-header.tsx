@@ -103,7 +103,7 @@ export function ListOptionsHeader({
             >
               {option.icon}
               {unseen > 0 && option.label === "Solicitudes mensajes" && (
-                <span className="absolute left-7 text-sm bottom-7 h-4 flex items-center justify-center text-white p-3 w-4 rounded-full bg-red-500">
+                <span className="absolute animate-in  zoom-in-0 duration-300 left-7 text-sm bottom-7 h-4 flex items-center justify-center text-white p-3 w-4 rounded-full bg-red-500">
                   {unseen}
                 </span>
               )}

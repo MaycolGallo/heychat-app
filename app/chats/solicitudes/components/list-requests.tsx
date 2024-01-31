@@ -16,7 +16,6 @@ import { handleFriendRequest } from "@/app/actions/handle-friends";
 import { useActionState } from "@/lib/use-form-state";
 import { Button } from "@/components/ui/button";
 import { ToastError, ToastSuccess } from "@/components/toasts/toasts";
-import { gyat } from "@/app/actions/gyat";
 import { toast } from "sonner";
 
 type Props = {
@@ -38,7 +37,6 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
   const [fastReq, setFastReq] = useOptimistic(requests);
   const [handleFriend, { loading, error, data }] =
     useActionState(handleFriendRequest);
-  // const [yo, { loading: l, error: e, data: d }] = useActionState(gyat);
 
   async function processFriend(idToProcess: string, key: string) {
     if (key === "add" || key === "remove") {
@@ -48,7 +46,6 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
         );
       });
     }
-    console.log(fastReq);
     const res = await handleFriend(idToProcess, key);
     if (res.data?.type === "error") {
       ToastError({ message: res.data.message });
@@ -57,18 +54,15 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
     }
   }
 
-  // const igonna = useCallback(
-  //   async (text: string) => {
-  //     const gayat = await yo(text);
-  //     if (gayat.data?.type === "error") {
-  //       toast.error(gayat.data.message);
-  //     } else {
-  //       toast.success(gayat.data?.message);
-  //     }
-  //     console.log({ lloadin: l, error: e, data: d });
-  //   },
-  //   [yo, l, e, d]
-  // );
+  function optimisticFriend(idToProcess: string, key: string) {
+    if (key === "add" || key === "remove") {
+      startTransition(() => {
+        setFastReq((current) =>
+          current.filter((request) => request.senderId !== idToProcess)
+        );
+      })
+    }
+  }
 
   useEffect(() => {
     pusherClient.subscribe(
@@ -91,10 +85,6 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
 
   return (
     <div className="request-container">
-      {/* <button onClick={() => ToastSuccess({ message: "Solicitud procesada" })}>
-        The relax
-      </button>
-      <button onClick={() => igonna("gyat")}>{l ? "loading" : "gyat"}</button> */}
       {fastReq.length ? (
         <ul className="grid requests grid-cols-1 gap-4 my-5">
           {requests.map((requeser) => (
@@ -126,11 +116,7 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
                 <Button
                   disabled={loading}
                   onClick={() => {
-                    setFastReq((current) =>
-                      current.filter(
-                        (request) => request.senderId !== requeser.senderId
-                      )
-                    );
+                    optimisticFriend(requeser.senderId, "add");
                     processFriend(requeser.senderId, "add");
                   }}
                   className="px-3 py-1 dark:text-white bg-violet-500 hover:bg-violet-600 dark:bg-violet-600 dark:hover:bg-violet-700"
@@ -140,11 +126,7 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
                 <Button
                   disabled={loading}
                   onClick={() => {
-                    setFastReq((current) =>
-                      current.filter(
-                        (request) => request.senderId !== requeser.senderId
-                      )
-                    );
+                    optimisticFriend(requeser.senderId, "remove");
                     processFriend(requeser.senderId, "remove")
                   }}
                   className="px-3 hover:bg-red-600 dark:text-white py-1 bg-red-500 dark:bg-red-600 dark:hover:bg-red-700"

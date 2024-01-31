@@ -72,7 +72,7 @@ export const FriendList = memo(function FriendList({
     room: sessionId,
     onMessage: (event) => {
       const message = JSON.parse(event.data);
-      console.log("yeah the sky is full of love", message);
+      // console.log("yeah the sky is full of love", message);
       if (message.type === "new_message" && message.userId !== sessionId) {
         setUnseenMessages((prev) => [...prev, message.message]);
       }
