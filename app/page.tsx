@@ -43,13 +43,12 @@ export default function Home() {
         </section>
 
         <p
-          className="absolute bottom-0 p-12 text-center sm:text-left"
+          className="absolute bottom-0 mb-20 text-center sm:text-left"
           style={{ textWrap: "balance" } as any}
         >
-          Copyright © {new Date().getFullYear()} Inversiones La Rosa Nautica
-        </p>
-        <p className="absolute flex gap-2 bottom-0 pb-4">
-          RUC: 20571320607 &bull;{" "}
+          Copyright © {new Date().getFullYear()}        </p>
+        <p className="absolute flex gap-2 items-center bottom-0 pb-4">
+        <span className="flex flex-col py-2">Fernando Hugo <span>Granados Prudencio</span></span> &bull;
           <a
             className="flex items-center text-sky-500 hover:underline "
             href="https://api.whatsapp.com/send/?phone=51920874994"

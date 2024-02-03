@@ -178,20 +178,19 @@ function Credits() {
       name: "Instagram",
       url: "https://www.instagram.com/rosanauticasrl/",
       icon: <IconInstagram />,
-      classname:'hover:bg-amber-500'
+      classname: "hover:bg-amber-500",
     },
     {
       name: "Facebook",
       url: "https://www.facebook.com/larosanauticasrl.com.pe/",
       icon: <IconFacebook />,
-      classname:'hover:bg-blue-500'
+      classname: "hover:bg-blue-500",
     },
     {
       name: "Tiktok",
       url: "https://www.tiktok.com/@inversioneslarosanautic1?is_from_webapp=1&sender_device=pc",
       icon: <IconTiktok />,
-      classname:'hover:bg-pink-500'
-
+      classname: "hover:bg-pink-500",
     },
   ];
 
@@ -203,7 +202,7 @@ function Credits() {
       </DialogTrigger>
       <DialogContent>
         <div>
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <Image
               src="https://larosanautica.com.pe/wp-content/uploads/2023/08/271601663_469086784815230_223349582365008669_n-3.jpg"
               alt="logo"
@@ -215,36 +214,13 @@ function Credits() {
             <h1 className="font-semibold">
               INVERSIONES LA ROSA NAUTICA S.R.L.
             </h1>
-          </div>
-          <ul className="py-3">
-            <li>
-              <span className="font-semibold">RUC</span>: 20571320607
-            </li>
-            <li>
-              <span className="font-semibold">Dirección</span>: Lima
-            </li>
-            <li>
-              <span className="font-semibold">Teléfono</span>: 920874994
-            </li>
-            <li>
-              <span className="font-semibold">Correos</span>:
-              larosanauticasrl@hotmail.com - larosanauticasrl@gmail.com
-            </li>
-            <li className="flex gap-3 justify-center pt-3">
-              {socials.map((social) => (
-                <a
-                  href={social.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  key={social.name}
-                  className={` ${social.classname} border border-neutral-400 dark:border-neutral-700 rounded-full p-2`}
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </li>
-           
-            <li className="text-center mt-3">Copyright © {new Date().getFullYear()}</li>
+          </div> */}
+          <h1>Desarrollado por <span className="font-semibold">Fernando Hugo Granados Prudencio</span></h1>
+          <ul className="space-y-2 my-3">
+            <li><span className="font-semibold">DNI:</span> 41939830</li>
+            <li><span className="font-semibold">Email:</span> consultoreslaon@gmail.com</li>
+            <li><span className="font-semibold">Teléfono:</span> 920874994</li>
+            <li className="text-center">Copyright © {new Date().getFullYear()}. Todos los derechos reservados.</li>
           </ul>
         </div>
       </DialogContent>
