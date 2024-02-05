@@ -18,8 +18,8 @@ export default class ConnServer implements Party.Server {
     connection: Party.Connection<unknown>,
     ctx: Party.ConnectionContext
   ) {
-    // connection.send(JSON.stringify({ chatters: this.user_status }));
-    await this.party.storage.deleteAll();
+    connection.send(JSON.stringify({ chatters: this.user_status }));
+    // await this.party.storage.deleteAll();
   }
 
   user_status = Array<Test>();
@@ -83,7 +83,7 @@ export default class ConnServer implements Party.Server {
     };
 
     this.addObjectToStorage(this.user_status, status);
-    // this.party.storage.put("connecteds", this.user_status);
+    this.party.storage.put("connecteds", this.user_status);
 
     // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
     this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);

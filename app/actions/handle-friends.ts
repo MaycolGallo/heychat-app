@@ -161,7 +161,7 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
 
       return {
         success: true,
-        message: "Friend request accepted",
+        message: "Solicitud de amistad aceptada",
       };
     }
 
@@ -182,7 +182,7 @@ export async function handleFriendRequest(idToUserToAdd: string, key: string) {
 
       return {
         success: true,
-        message: "Friend request removed",
+        message: "Solicitud de amistad eliminada",
       };
     }
     

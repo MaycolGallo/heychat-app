@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  memo,
-  useRef,
-  useLayoutEffect,
-  useReducer,
-} from "react";
+import { useState, memo, useRef, useLayoutEffect, useReducer } from "react";
 import { MessageBox } from "./message-box";
 import { ScrollAreaChat } from "../ui/chat-scroll-area";
 import Dots from "../loaders/dots";
@@ -15,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { ArchiveX } from "lucide-react";
 import { useParty } from "@/party/useParty";
 import usePartySocket from "partysocket/react";
+import { AnimatePresence, motion } from "react-magic-motion";
 
 type MessageListProps = {
   initialMessages: Record<string, Message[]>;
@@ -128,7 +122,7 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
         className="flex justify-end max-w-screen-lg mx-auto bg-sky-50 dark:bg-zinc-900 flex-col p-4 gap-4"
       >
         {Object.keys(messages).length ? (
-          <>
+          <AnimatePresence mode="popLayout" initial={false}>
             {Object.entries(messages).map(([key, message]) => (
               <ul key={key} className="flex flex-col gap-3">
                 <span className="mx-auto text-sm bg-zinc-300 px-3 py-1 rounded-full dark:bg-neutral-600 dark:text-white">
@@ -147,17 +141,25 @@ const MessageList = memo(function MessageList(props: MessageListProps) {
                 })}
               </ul>
             ))}
-          </>
+          </AnimatePresence>
         ) : (
           <EmptyMessages />
         )}
-        {isTyping && (
-          <div className="inline-flex items-center fixed animate-in slide-in-from-bottom-0 bottom-20 left-1/2 justify-center">
-            <span className="bg-neutral-300 dark:text-neutral-100 dark:bg-neutral-600 px-4 py-2 rounded-full">
-              <Dots />
-            </span>
-          </div>
-        )}
+
+        <AnimatePresence>
+          {isTyping && (
+            <motion.div
+              initial={{ opacity: 0, bottom: "-10rem",scale:0.8 }}
+              animate={{ opacity: 1, bottom: "5rem",scale:1 }}
+              exit={{ opacity: 0, bottom: "-10rem" ,scale:0.8 }}
+              className="inline-flex items-center fixed left-1/2 justify-center"
+            >
+              <span className="bg-neutral-300 dark:text-neutral-100 dark:bg-neutral-600 px-4 py-2 rounded-full">
+                <Dots />
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
     </ScrollAreaChat>
   );
