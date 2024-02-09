@@ -5,17 +5,25 @@ import { Await } from "../buildui/await";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { linkChatSorted, toPusherKey } from "@/lib/utils";
-import React, { useEffect, Suspense, useState, memo, useMemo } from "react";
+import React, {
+  useEffect,
+  Suspense,
+  useState,
+  memo,
+  useMemo,
+  useCallback,
+} from "react";
 import { pusherClient } from "@/lib/pusher";
 // import { useToast } from "../ui/use-toast";
-import {toast} from 'sonner'
+import { toast } from "sonner";
 import { ScrollArea } from "../ui/scroll-area";
 import Image from "next/image";
 import { AddUser } from "../AddUser";
 import { FriendItem } from "./friend-item";
 import usePartySocket from "partysocket/react";
-import { CheckCircle2 } from "lucide-react";
-import PartySocket from "partysocket";
+import { extractString } from "@/lib/extractString";
+
+type Unseen = Record<string, { unseen: number }>;
 
 export const FriendList = memo(function FriendList({
   sessionId,
@@ -28,9 +36,10 @@ export const FriendList = memo(function FriendList({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const query = useParams()
+  const query = useParams();
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
   const [activeFriends, setActiveFriends] = useState<User[]>(friends);
+  const [unseenMes, setUnseenMess] = useState<Unseen>({});
   const [lastMessages, setLastMessages] = useState<any[]>(
     friendLastMessage || []
   );
@@ -42,42 +51,30 @@ export const FriendList = memo(function FriendList({
     [activeFriends]
   );
 
-  //  const socket = useMemo(() => {
-  //   if (query.chatId) {
-  //     return new PartySocket({
-  //       host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
-  //       room: query.chatId as string,
-  //     });
-  //   }
-  //   return null
-  // }, [query.chatId])
-
-
-  // useEffect(() => {
-  //   const handleSocket = (event: MessageEvent) => {
-  //     const message = JSON.parse(event.data);
-  //     console.log("yeah the sky is full of love", message);
-  //     if (message.type === "new_message" && message.userId !== sessionId) {
-  //       setUnseenMessages((prev) => [...prev, message]);
-  //     }
-  //   }
-  //   socket?.addEventListener('message', handleSocket)
-  //   return () => socket?.removeEventListener('message', handleSocket)
-  // },[socket, sessionId]);
-
-  // console.log("last messages", unseenMessages);
-
-  usePartySocket({
+  const socket = usePartySocket({
     host: process.env.NEXT_PUBLIC_PARTYKIT_HOST || "localhost:1999",
     room: sessionId,
     onMessage: (event) => {
       const message = JSON.parse(event.data);
-      // console.log("yeah the sky is full of love", message);
       if (message.type === "new_message" && message.userId !== sessionId) {
-        setUnseenMessages((prev) => [...prev, message.message]);
+        setUnseenMessages((prev) => {
+          return [...prev, message];
+        });
+      }
+
+      if (message.unseen !== undefined) {
+        setUnseenMess(message.unseen);
       }
     },
-  })
+  });
+
+  const getUnseenCount = useCallback(
+    (friendId: string) => {
+      const unseenCount = unseenMes[friendId]?.unseen || 0;
+      return unseenCount;
+    },
+    [unseenMes]
+  );
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`));
@@ -118,30 +115,32 @@ export const FriendList = memo(function FriendList({
   }, [sessionId, pathname, router]);
 
   useEffect(() => {
-    if (pathname.includes("/chats")) {
-      setUnseenMessages((prev) =>
-        prev.filter((msg) => !pathname.includes(msg.senderId))
-      );
-    }
-  }, [pathname]);
+    setUnseenMess((prev) => {
+      if (query.chatId) {
+        const friendId = extractString(query.chatId as string, sessionId);
+        if (friendId === undefined) return prev; // Return previous state if friendId is undefined
+        socket.send(JSON.stringify({ type: "seen", id: friendId }));
+        return {
+          ...prev,
+          [friendId]: { unseen: 0 },
+        };
+      }
+      return prev;
+    });
+  }, [socket, sessionId, query.chatId]);
 
   return (
     <>
       {uniqueFriends.length ? (
         <ul className=" flex flex-col gap-4 p-4">
           {uniqueFriends.sort().map((friend) => {
-            const unseenCount = unseenMessages.filter(
-              (msg) => msg.senderId === friend.id
-            ).length;
-              
             return (
               <FriendItem
                 friend={friend}
                 key={friend.id}
                 friendLastMessage={friendLastMessage!}
                 sessionId={sessionId}
-                // unseenCount={unseenMessages.length}
-                unseenCount={unseenCount}
+                unseenCount={getUnseenCount(friend.id)}
               />
             );
           })}

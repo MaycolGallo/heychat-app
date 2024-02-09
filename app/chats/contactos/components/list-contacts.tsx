@@ -8,6 +8,7 @@ import { Filters } from "./filters";
 import { getDistinctCategories } from "@/lib/getFilters";
 import { FancyBox } from "@/components/ui/change-cat";
 import { unstable_cache } from "next/cache";
+import {motion} from 'react-magic-motion'
 
 type Props = {
   initialContacts: Array<{
@@ -51,7 +52,7 @@ export function ListContacts({ initialContacts, sessionId }: Props) {
       {numNotBlocked > 0 ? (
         <div className="request-container">
           {selectedFilter ? <span className="text-xl font-semibold">{selectedFilter}</span> : null}
-          <section className="grid grid-cols-1 requests gap-4 my-3">
+          <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 requests gap-4 my-3">
             {filterContacts
               .filter((contact) => !contact.blocked)
               .map((contact, index) => (
@@ -90,7 +91,7 @@ export function ListContacts({ initialContacts, sessionId }: Props) {
                   </div>
                 </article>
               ))}
-          </section>
+          </motion.section>
         </div>
       ) : (
         <EmptyList />

@@ -1,3 +1,4 @@
+import { T } from "@upstash/redis/zmscore-b6b93f14";
 import type * as Party from "partykit/server";
 
 type Test = {
@@ -13,6 +14,14 @@ type Test = {
 
 export default class ConnServer implements Party.Server {
   constructor(readonly party: Party.Party) {}
+  
+  user_status = Array<Test>();
+  junk = 0;
+
+  async onStart() {
+    this.user_status = (await this.party.storage.get("connecteds")) as Test[] ?? [];
+    this.junk = (await this.party.storage.get("junk")) as number;
+  }
 
   async onConnect(
     connection: Party.Connection<unknown>,
@@ -22,8 +31,6 @@ export default class ConnServer implements Party.Server {
     // await this.party.storage.deleteAll();
   }
 
-  user_status = Array<Test>();
-  junk = 0;
   async onMessage(
     message: string | ArrayBuffer | ArrayBufferView,
     sender: Party.Connection<unknown>
@@ -31,7 +38,10 @@ export default class ConnServer implements Party.Server {
     // this.party.broadcast(message, [sender.id]);
 
     // this.user_status.push(JSON.parse(message as string));
-    this.addObjectToStorage(this.user_status, JSON.parse(message as string));
+    this.user_status = this.addObjectToStorage(
+      this.user_status,
+      JSON.parse(message as string)
+    );
     // this.party.broadcast(JSON.stringify(message), []);
     // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
 
@@ -44,13 +54,6 @@ export default class ConnServer implements Party.Server {
     this.party.broadcast(JSON.stringify({ connecteds: storage }), []);
     // console.log("storage", storage);
     // this.party.broadcast(JSON.stringify({ connecteds:this.user_status }), []);
-  }
-
-  async onStart() {
-    if (!this.user_status) {
-      this.user_status = (await this.party.storage.get("connecteds")) as Test[];
-    }
-    this.junk = (await this.party.storage.get("junk")) as number;
   }
 
   addObjectToStorage(arr: Test[], newItem: Test) {
@@ -67,6 +70,7 @@ export default class ConnServer implements Party.Server {
     } else {
       arr.push(newItem);
     }
+    return arr;
   }
 
   async onClose(conn: Party.Connection<unknown>) {
@@ -82,12 +86,11 @@ export default class ConnServer implements Party.Server {
       },
     };
 
-    this.addObjectToStorage(this.user_status, status);
-    this.party.storage.put("connecteds", this.user_status);
-
-    // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
+    this.user_status = this.addObjectToStorage(this.user_status, status);
     this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
 
+    // this.party.broadcast(JSON.stringify({ connecteds: this.user_status }), []);
+    await this.party.storage.put("connecteds", this.user_status);
   }
 }
 ConnServer satisfies Party.Worker;

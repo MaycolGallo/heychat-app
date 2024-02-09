@@ -26,7 +26,7 @@ type Props = {
 
 function EmptyList() {
   return (
-    <div className="flex w-72 py-6 bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:text-white mx-auto border shadow rounded-lg translate-y-[150%] flex-col items-center justify-center gap-2">
+    <div className="flex animate-in fade-in-0 duration-1000 w-72 py-6 bg-white dark:bg-neutral-800 dark:border-neutral-700 dark:text-white mx-auto border shadow rounded-lg translate-y-[150%] flex-col items-center justify-center gap-2">
       <UserX key="exclude" className="h-12 w-12 text-neutral-400" />
       <p>Sin solicitudes de mensaje</p>
     </div>
@@ -86,8 +86,6 @@ export function ListRequests({ initialRequests, sessionId }: Props) {
       pusherClient.unbind("new_incoming_friend", newFriendRequestHandler);
     };
   }, [sessionId, setFastReq]);
-
-  console.log("optimistic", fastReq);
 
   return (
     <div className="request-container">

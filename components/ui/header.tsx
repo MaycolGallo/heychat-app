@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { ChatOptions } from "../header-menu-options";
 import { DropdownOptions } from "../dropdown-options";
 import Link from "next/link";
-// import logo from '@/real-logo (1).svg'
 
 export async function Header() {
   const session = await getServerSession(authOptions);
@@ -29,15 +28,6 @@ export async function Header() {
           name={session?.user?.name!}
           email={session?.user?.email!}
         />
-        {/* <span>
-          <Image
-            src={session?.user?.image!}
-            width={40}
-            height={40}
-            className="rounded-full"
-            alt="profile-pic"
-          />
-        </span> */}
       </div>
     </header>
   );

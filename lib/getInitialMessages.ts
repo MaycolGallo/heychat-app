@@ -20,8 +20,6 @@ export async function getInitialMessages(chatId: string) {
       return previous;
     }, {} as Record<string, Message[]>);
 
-    console.log(groupedByDay);
-
     return groupedByDay;
   } catch (error) {
     console.log(error);

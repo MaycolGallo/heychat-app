@@ -13,19 +13,6 @@ type Props = {
 export function OptionsMenu(props: Props) {
   const { containerHeight, chatId, message } = props;
   const [isCopied, setIsCopied] = useState(false);
-  // const deleteMessage = useCallback(async () => {
-  //   console.log('yo lil bros im deleteing or what???',chatId, message);
-  //   return await fetch("/api/messages", {
-  //     method: "DELETE",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       chatId,
-  //       message,
-  //     }),
-  //   });
-  // }, [chatId, message]);
 
   const copyToClipboard = useCallback(async () => {
     try {
