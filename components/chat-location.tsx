@@ -26,7 +26,7 @@ export function ChatLocation({ userId }: { userId: string }) {
     room: "user-location",
     onMessage: (event) => {
       const message = JSON.parse(event.data);
-      console.log("yo what going on ", message);
+      // console.log("yo what going on ", message);s
       if (userId !== message.userId) {
         setCoord(message);
       }

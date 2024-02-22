@@ -46,8 +46,9 @@ export default function Home() {
           className="absolute bottom-0 mb-20 text-center sm:text-left"
           style={{ textWrap: "balance" } as any}
         >
-          Copyright © {new Date().getFullYear()}        </p>
-        <p className="absolute flex gap-2 items-center bottom-0 pb-4">
+          Copyright © {new Date().getFullYear()}{" "}
+        </p>
+        {/* <p className="absolute flex gap-2 items-center bottom-0 pb-4">
         <span className="flex flex-col py-2">Fernando Hugo <span>Granados Prudencio</span></span> &bull;
           <a
             className="flex items-center text-sky-500 hover:underline "
@@ -57,7 +58,7 @@ export default function Home() {
             <Phone className="w-4 h-4 mr-1" />
             Contacto
           </a>
-        </p>
+        </p> */}
       </main>
     </>
   );

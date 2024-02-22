@@ -163,9 +163,9 @@ export function DropdownOptions(props: Props) {
               Cerrar Sesión
             </button>
           </li>
-          <li className="flex justify-between hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded px-2 py-2 items-center">
+          {/* <li className="flex justify-between hover:bg-neutral-300 dark:hover:bg-neutral-700 rounded px-2 py-2 items-center">
             <Credits />
-          </li>
+          </li> */}
         </ul>
       </PopoverContent>
     </Popover>
